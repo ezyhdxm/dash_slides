@@ -7,7 +7,7 @@ and shows what happens behind the scenes.
 
 | path | what |
 |---|---|
-| `slides/index.html` | the deck (reveal.js). Open it in a browser. `S` opens the speaker notes, which include timings |
+| `slides/index.html` | the deck (reveal.js), interactive. Open it in a browser. `S` opens the speaker notes, which include timings |
 | `slides/dash_in_30_minutes.pdf` | the same deck as a PDF, a backup that works offline |
 | `slides/img/` | screenshots of the demos, taken in headless Chrome |
 | `slides/captured/` | the real request and response bodies shown on slides 12 and 15, recorded from Chrome |
@@ -35,6 +35,21 @@ port 8050 at a time, so stop one demo (Ctrl+C) before starting the next. The dem
 Plotly 6.8.0, pandas 3.0.6 and dash-ag-grid 35.3.0.
 
 The deck loads reveal.js from a CDN, so it needs internet. Without internet, use the PDF.
+
+## Presenting
+
+- **Open the deck:** double-click `slides/index.html` (or open it with Chrome). Press `F` for full screen and `S`
+  for the speaker notes window.
+- **Stepping:** each bullet, table row, card and diagram part starts greyed out. Press → or Space to light up the
+  next one, and ← to go back. The sequence diagrams on slides 5, 11 and 15 build one arrow at a time. On slides
+  6, 10 and 14 the same keys step through highlighted lines of code.
+- **Slide 3 is a live Plotly chart:** zoom, hover and click the legend. No server is needed.
+- **Live apps:** slides 6, 9, 10, 14 and 18 have a **▶ Live app** button. Start that slide's demo first (the
+  command is under the screenshot, e.g. `cd demos; python 04_callback.py`). The button then opens the running
+  app over the whole slide, and you can click and type in it. **✕ Back to slide** (or moving to another slide)
+  closes it, and the arrow keys work again.
+- **Port 8050 busy?** Dash reads the `PORT` environment variable: run `PORT=8051 python 04_callback.py` and open
+  `slides/index.html?port=8051`.
 
 ## Running order (30 min)
 

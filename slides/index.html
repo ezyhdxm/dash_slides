@@ -74,6 +74,25 @@
   svg.dia .numt { fill: #fff; font-size: 13px; font-weight: 700; }
   .title-slide h1 { margin-top: 1.4em; }
   .title-slide .sub { color: var(--muted); font-size: .9em; }
+  /* step-through: items start greyed out and light up one per click */
+  .reveal .fragment.dim { opacity: .18; visibility: inherit; transition: opacity .25s ease; }
+  .reveal .fragment.dim.visible { opacity: 1; }
+  .reveal li.fragment.current-fragment::marker { color: var(--blue); }
+  .reveal tr.fragment.current-fragment td { background: var(--blue-soft); }
+  /* live demo boxes: a screenshot, or the running app in an iframe */
+  .live { position: relative; }
+  .live-btn { position: absolute; top: 10px; right: 10px; z-index: 2; font: 600 14px var(--r-main-font);
+              background: var(--blue); color: #fff; border: 0; border-radius: 99px; padding: 6px 14px;
+              cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  .live .run { display: block; font: 13px var(--r-code-font); color: var(--muted); margin-top: 6px; }
+  .live-overlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 50; background: #fff;
+                  pointer-events: auto;
+                  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+                  box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+  .live-overlay iframe { width: 100%; height: 100%; max-width: none; max-height: none; border: 0; }
+  .live-close { position: absolute; top: 10px; right: 10px; font: 600 15px var(--r-main-font); background: var(--ink);
+                color: #fff; border: 0; border-radius: 99px; padding: 7px 16px; cursor: pointer; z-index: 51; }
+  .print-pdf .live-btn { display: none; }
   .reveal .slide-number { font-size: 14px; background: transparent; color: var(--muted); }
 </style>
 </head>
@@ -94,12 +113,12 @@
 <section>
   <h2>Plan</h2>
   <ul class="agenda">
-    <li><span class="n">1</span>Plotly alone vs Dash: why a server <span class="t">4 min</span></li>
-    <li><span class="n">2</span>Building a page: layout, Plotly figures, widgets <span class="t">5 min</span></li>
-    <li><span class="n">3</span>Callbacks: how the browser hands work back to Python <span class="t">7 min</span></li>
-    <li><span class="n">4</span>Click a point, drill into another chart <span class="t">4 min</span></li>
-    <li><span class="n">5</span>Letting VS Code + Copilot write Dash for you <span class="t">5 min</span></li>
-    <li><span class="n">6</span>Showcase: a full app <span class="t">4 min</span></li>
+    <li class="fragment dim"><span class="n">1</span>Plotly alone vs Dash: why a server <span class="t">4 min</span></li>
+    <li class="fragment dim"><span class="n">2</span>Building a page: layout, Plotly figures, widgets <span class="t">5 min</span></li>
+    <li class="fragment dim"><span class="n">3</span>Callbacks: how the browser hands work back to Python <span class="t">7 min</span></li>
+    <li class="fragment dim"><span class="n">4</span>Click a point, drill into another chart <span class="t">4 min</span></li>
+    <li class="fragment dim"><span class="n">5</span>Letting VS Code + Copilot write Dash for you <span class="t">5 min</span></li>
+    <li class="fragment dim"><span class="n">6</span>Showcase: a full app <span class="t">4 min</span></li>
   </ul>
   <aside class="notes">0:45–1:15. One idea per section; each has a runnable demo.</aside>
 </section>
@@ -119,12 +138,14 @@ fig = px.scatter(bonds, x="maturity", y="spread",
 fig.write_html("plotly_only.html")
 </code></pre>
       <ul class="small">
-        <li>Python builds the figure <b>once</b>, as JSON</li>
-        <li>The HTML holds the data + plotly.js</li>
-        <li>Zoom, hover, legend clicks: all JavaScript in the browser</li>
+        <li class="fragment dim">Python builds the figure <b>once</b>, as JSON</li>
+        <li class="fragment dim">The HTML holds the data + plotly.js</li>
+        <li class="fragment dim">Zoom, hover, legend clicks: all JavaScript in the browser</li>
       </ul>
     </div>
-    <img class="shot" src="img/01_plotly_only.jpg" alt="Plotly scatter in a browser">
+    <div><div id="fig01" class="shot" style="height:440px"></div>
+    <span class="small muted">This chart is live: zoom, hover, click the legend. No server.</span></div>
+    <script type="application/json" id="fig01-data">{"data":[{"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esector=Banks\u003cbr\u003ematurity=%{x}\u003cbr\u003espread=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["Harbor Trust","Harbor Trust","Harbor Trust","Harbor Trust","Harbor Trust","Northbank","Northbank","Northbank","Northbank","Northbank","Summit Financial","Summit Financial","Summit Financial","Summit Financial","Summit Financial"],"legendgroup":"Banks","marker":{"color":"#636efa","symbol":"circle"},"mode":"markers","name":"Banks","orientation":"v","showlegend":true,"x":{"dtype":"i1","bdata":"AgcKFB4FBwoUHgIFBwoU"},"xaxis":"x","y":{"dtype":"f8","bdata":"MzMzMzPTWUDNzMzMzMxgQAAAAAAAQGFAmpmZmZmpZUCamZmZmVloQJqZmZmZiWdAZmZmZmamZEAzMzMzMxNoQJqZmZmZKW5AMzMzMzOLcUDNzMzMzCxlQM3MzMzMXGdAZmZmZmZmZ0AzMzMzMyNqQM3MzMzM\u002fGxA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esector=Consumer\u003cbr\u003ematurity=%{x}\u003cbr\u003espread=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["Crest Beverages","Crest Beverages","Crest Beverages","Crest Beverages","Crest Beverages","Maple Foods","Maple Foods","Maple Foods","Maple Foods","Maple Foods","Urban Retail","Urban Retail","Urban Retail","Urban Retail","Urban Retail"],"legendgroup":"Consumer","marker":{"color":"#EF553B","symbol":"circle"},"mode":"markers","name":"Consumer","orientation":"v","showlegend":true,"x":{"dtype":"i1","bdata":"AwcKFB4CAwoUHgIDBwoU"},"xaxis":"x","y":{"dtype":"f8","bdata":"mpmZmZkpYkDNzMzMzFxnQM3MzMzMbGZAmpmZmZlJbUDNzMzMzNxwQGZmZmZmxlNAZmZmZmYmU0AAAAAAAKBaQAAAAAAAQF9AzczMzMzsZ0CamZmZmTliQJqZmZmZyWJAAAAAAABQZkBmZmZmZnZmQJqZmZmZSWpA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esector=Energy\u003cbr\u003ematurity=%{x}\u003cbr\u003espread=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["Bluewater Gas","Bluewater Gas","Bluewater Gas","Bluewater Gas","Bluewater Gas","Petra Oil","Petra Oil","Petra Oil","Petra Oil","Petra Oil","Ridge Power","Ridge Power","Ridge Power","Ridge Power","Ridge Power"],"legendgroup":"Energy","marker":{"color":"#00cc96","symbol":"circle"},"mode":"markers","name":"Energy","orientation":"v","showlegend":true,"x":{"dtype":"i1","bdata":"AwcKFB4DBQcKFAIDBQoe"},"xaxis":"x","y":{"dtype":"f8","bdata":"ZmZmZmZGYkDNzMzMzLxjQJqZmZmZyWRAAAAAAAAAbEAAAAAAACBwQJqZmZmZuWJAmpmZmZkJZUAzMzMzM0NjQJqZmZmZGWVAZmZmZmb2a0BmZmZmZtZ0QDMzMzMzc3VAmpmZmZmhdUAzMzMzMyt2QGZmZmZmrntA"},"yaxis":"y","type":"scatter"},{"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esector=Tech\u003cbr\u003ematurity=%{x}\u003cbr\u003espread=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["Nimbus Cloud","Nimbus Cloud","Nimbus Cloud","Nimbus Cloud","Nimbus Cloud","Quanta Systems","Quanta Systems","Quanta Systems","Quanta Systems","Quanta Systems","Vertex Chips","Vertex Chips","Vertex Chips","Vertex Chips","Vertex Chips"],"legendgroup":"Tech","marker":{"color":"#ab63fa","symbol":"circle"},"mode":"markers","name":"Tech","orientation":"v","showlegend":true,"x":{"dtype":"i1","bdata":"AgMHChQCAwcKHgIFBwoe"},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAAAIckBmZmZmZsZxQDMzMzMzk3NAzczMzMy0c0DNzMzMzGR2QDMzMzMz42JAmpmZmZnJZUAAAAAAANBkQDMzMzMzU2dAmpmZmZkhcUCamZmZmflWQM3MzMzMLFpAzczMzMxsXUDNzMzMzCxdQAAAAAAA8GpA"},"yaxis":"y","type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"maturity"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"spread"}},"legend":{"title":{"text":"sector"},"tracegroupgap":0},"title":{"text":"Corporate bonds: spread vs maturity"},"margin":{"l":50,"r":20,"t":50,"b":45}}}</script>
   </div>
   <aside class="notes">1:15–2:15. Demo 01: run it, open plotly_only.html, zoom and hover. Point out: no Python is
     running now. The file works offline, by email, anywhere.</aside>
@@ -137,21 +158,21 @@ fig.write_html("plotly_only.html")
   <div class="cols">
     <div class="card"><b>Fine in the browser</b>
       <ul>
-        <li>zoom, pan, hover, select</li>
-        <li>toggle traces in the legend</li>
-        <li>dropdowns/sliders that switch between data <i>already in the file</i></li>
+        <li class="fragment dim">zoom, pan, hover, select</li>
+        <li class="fragment dim">toggle traces in the legend</li>
+        <li class="fragment dim">dropdowns/sliders that switch between data <i>already in the file</i></li>
       </ul>
     </div>
     <div class="card"><b>Needs Python again</b>
       <ul>
-        <li>"show me Energy only", recomputed</li>
-        <li>query a database, call a model, run a pricer</li>
-        <li>data too big to ship into one HTML file</li>
-        <li>one chart driving another, with real logic</li>
+        <li class="fragment dim">"show me Energy only", recomputed</li>
+        <li class="fragment dim">query a database, call a model, run a pricer</li>
+        <li class="fragment dim">data too big to ship into one HTML file</li>
+        <li class="fragment dim">one chart driving another, with real logic</li>
       </ul>
     </div>
   </div>
-  <div class="take">Plotly has no back end. Once the HTML is written, nothing can ask Python a new question.</div>
+  <div class="take fragment dim">Plotly has no back end. Once the HTML is written, nothing can ask Python a new question.</div>
   <aside class="notes">2:15–3:00. The browser can only rearrange what it was given. Anything that needs computation
     means re-running the script and re-sending the file.</aside>
 </section>
@@ -167,6 +188,7 @@ fig.write_html("plotly_only.html")
       <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f8a5b"/></marker>
       <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c23b3b"/></marker>
     </defs>
+    <g class="fragment dim" data-fragment-index="0">
     <!-- left: plotly -->
     <text x="250" y="26" class="h" text-anchor="middle">Plotly alone: one way, once</text>
     <rect x="70" y="50" width="360" height="62" rx="10" class="bxo"/>
@@ -182,35 +204,48 @@ fig.write_html("plotly_only.html")
     <rect x="70" y="270" width="360" height="72" rx="10" class="bxb"/>
     <text x="250" y="298" text-anchor="middle" class="h">Browser</text>
     <text x="250" y="320" text-anchor="middle" class="s">zoom · hover · pan (JavaScript only)</text>
+    </g>
+    <g class="fragment dim" data-fragment-index="1">
     <path d="M440,305 C482,305 482,80 440,80" class="arx" marker-end="url(#ahr)"/>
     <text x="482" y="196" class="s" style="fill:#c23b3b">new question?</text>
     <text x="482" y="214" class="s" style="fill:#c23b3b">re-run the script</text>
     <text x="250" y="386" text-anchor="middle" class="s">No server: nothing is listening after the file is written.</text>
+    </g>
 
     <!-- divider -->
     <line x1="600" y1="20" x2="600" y2="440" stroke="#d5dbe5" stroke-width="2"/>
 
+    <g class="fragment dim" data-fragment-index="2">
     <!-- right: dash -->
     <text x="850" y="26" class="h" text-anchor="middle">Dash: a conversation</text>
     <rect x="660" y="50" width="380" height="88" rx="10" class="bxb"/>
     <text x="850" y="78" text-anchor="middle" class="h">Browser</text>
     <text x="850" y="100" text-anchor="middle" class="s">Dash renderer (React) + plotly.js + widgets</text>
     <text x="850" y="120" text-anchor="middle" class="s">holds the page and every widget's value</text>
+    </g>
+    <g class="fragment dim" data-fragment-index="3">
     <line x1="780" y1="140" x2="780" y2="262" class="arb" marker-end="url(#ahb)"/>
     <text x="772" y="186" text-anchor="end" class="s">"sector.value is</text>
     <text x="772" y="204" text-anchor="end" class="s">now Energy"</text>
     <text x="772" y="222" text-anchor="end" class="mono" style="fill:#2f5bd3">POST JSON</text>
+    </g>
+    <g class="fragment dim" data-fragment-index="5">
     <line x1="920" y1="262" x2="920" y2="140" class="arg" marker-end="url(#ahg)"/>
     <text x="930" y="186" class="s">"new figure +</text>
     <text x="930" y="204" class="s">new text"</text>
     <text x="930" y="222" class="mono" style="fill:#1f8a5b">JSON reply</text>
+    </g>
+    <g class="fragment dim" data-fragment-index="4">
     <rect x="660" y="266" width="380" height="80" rx="10" class="bxg"/>
     <text x="850" y="294" text-anchor="middle" class="h">Dash server (Flask)</text>
     <text x="850" y="316" text-anchor="middle" class="s">keeps running your Python:</text>
     <text x="850" y="334" text-anchor="middle" class="s">callbacks = functions it calls on demand</text>
+    </g>
+    <g class="fragment dim" data-fragment-index="6">
     <line x1="850" y1="346" x2="850" y2="384" class="ar" marker-end="url(#ah)"/>
     <rect x="720" y="388" width="260" height="48" rx="10" class="bx"/>
     <text x="850" y="418" text-anchor="middle" class="s">pandas · databases · models · pricers</text>
+    </g>
   </svg>
   <aside class="notes">3:00–5:15. The key picture of the talk. Left: Python's job ends when the file is written.
     Right: the server stays up. The browser keeps the page and the widget values; when a value that matters changes,
@@ -241,7 +276,7 @@ app.layout = html.Div([     # the page: a tree of components
 if __name__ == "__main__":
     app.run(debug=True)     # http://127.0.0.1:8050
 </code></pre>
-    <img class="shot" src="img/02_hello.jpg" alt="The hello Dash app">
+    <div class="live" data-w="1200" data-h="760"><img class="shot" src="img/02_hello.jpg" alt="The hello Dash app"><button class="live-btn" title="Opens the running demo over the whole slide">▶ Live app</button><span class="run">cd demos; python 02_hello_dash.py</span></div>
   </div>
   <aside class="notes">5:15–6:45. Demo 02. Step through the highlighted lines (arrow key). debug=True gives hot reload
     and the error panel. Note there is no HTML, no JavaScript: the layout is Python objects.</aside>
@@ -254,11 +289,11 @@ if __name__ == "__main__":
   <div class="cols">
     <div>
       <ul class="small">
-        <li><code>html.*</code>: one class per HTML tag: <code>Div</code>, <code>H1</code>, <code>P</code>, <code>Table</code>, <code>Button</code>…</li>
-        <li><code>dcc.*</code>: interactive pieces: <code>Graph</code>, <code>Dropdown</code>, <code>Slider</code>, <code>Tabs</code>…</li>
-        <li>Each component has <b>props</b>: <code>children</code>, <code>style</code>, <code>className</code>, <code>value</code>, <code>figure</code>…</li>
-        <li>An <code>id</code> names a component so callbacks can read or write its props</li>
-        <li>CSS files in <code>assets/</code> are loaded automatically</li>
+        <li class="fragment dim"><code>html.*</code>: one class per HTML tag: <code>Div</code>, <code>H1</code>, <code>P</code>, <code>Table</code>, <code>Button</code>…</li>
+        <li class="fragment dim"><code>dcc.*</code>: interactive pieces: <code>Graph</code>, <code>Dropdown</code>, <code>Slider</code>, <code>Tabs</code>…</li>
+        <li class="fragment dim">Each component has <b>props</b>: <code>children</code>, <code>style</code>, <code>className</code>, <code>value</code>, <code>figure</code>…</li>
+        <li class="fragment dim">An <code>id</code> names a component so callbacks can read or write its props</li>
+        <li class="fragment dim">CSS files in <code>assets/</code> are loaded automatically</li>
       </ul>
     </div>
     <svg class="dia" viewBox="0 0 520 330" role="img" aria-label="Component tree: Div containing H1, Dropdown and Graph">
@@ -304,10 +339,10 @@ dcc.Graph(
     <div class="card"><b>A graph is also an input.</b> The browser fills these props when the user acts:
       <table style="font-size:.95em;margin-top:.5em">
         <tr><th>prop</th><th>set when you…</th></tr>
-        <tr><td><code>clickData</code></td><td>click a point</td></tr>
-        <tr><td><code>hoverData</code></td><td>hover a point</td></tr>
-        <tr><td><code>selectedData</code></td><td>box / lasso select</td></tr>
-        <tr><td><code>relayoutData</code></td><td>zoom or pan</td></tr>
+        <tr class="fragment dim"><td><code>clickData</code></td><td>click a point</td></tr>
+        <tr class="fragment dim"><td><code>hoverData</code></td><td>hover a point</td></tr>
+        <tr class="fragment dim"><td><code>selectedData</code></td><td>box / lasso select</td></tr>
+        <tr class="fragment dim"><td><code>relayoutData</code></td><td>zoom or pan</td></tr>
       </table>
       <p style="margin-top:.5em">We use <code>clickData</code> in section 4.</p>
     </div>
@@ -322,18 +357,18 @@ dcc.Graph(
   <div class="cols wide-right">
     <table>
       <tr><th>component</th><th>its value prop</th></tr>
-      <tr><td><code>dcc.Dropdown</code> (single / multi)</td><td><code>value</code></td></tr>
-      <tr><td><code>dcc.Checklist</code>, <code>dcc.RadioItems</code></td><td><code>value</code></td></tr>
-      <tr><td><code>dcc.Slider</code>, <code>dcc.RangeSlider</code></td><td><code>value</code></td></tr>
-      <tr><td><code>dcc.Input</code> (text, number…)</td><td><code>value</code></td></tr>
-      <tr><td><code>dcc.DatePickerSingle</code> / <code>Range</code></td><td><code>date</code> / <code>start_date</code>…</td></tr>
-      <tr><td><code>dcc.Tabs</code></td><td><code>value</code></td></tr>
-      <tr><td><code>html.Button</code></td><td><code>n_clicks</code></td></tr>
-      <tr><td><code>dcc.Interval</code> (a timer)</td><td><code>n_intervals</code></td></tr>
-      <tr><td><code>dcc.Store</code>, <code>dcc.Upload</code>, <code>dcc.Download</code></td><td>data / files</td></tr>
-      <tr><td>add-ons: <code>dash-ag-grid</code>, <code>dash-bootstrap-components</code>, <code>dash-mantine-components</code></td><td></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Dropdown</code> (single / multi)</td><td><code>value</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Checklist</code>, <code>dcc.RadioItems</code></td><td><code>value</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Slider</code>, <code>dcc.RangeSlider</code></td><td><code>value</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Input</code> (text, number…)</td><td><code>value</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.DatePickerSingle</code> / <code>Range</code></td><td><code>date</code> / <code>start_date</code>…</td></tr>
+      <tr class="fragment dim"><td><code>dcc.Tabs</code></td><td><code>value</code></td></tr>
+      <tr class="fragment dim"><td><code>html.Button</code></td><td><code>n_clicks</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Interval</code> (a timer)</td><td><code>n_intervals</code></td></tr>
+      <tr class="fragment dim"><td><code>dcc.Store</code>, <code>dcc.Upload</code>, <code>dcc.Download</code></td><td>data / files</td></tr>
+      <tr class="fragment dim"><td>add-ons: <code>dash-ag-grid</code>, <code>dash-bootstrap-components</code>, <code>dash-mantine-components</code></td><td></td></tr>
     </table>
-    <img class="shot" src="img/03_widgets.jpg" alt="Widget gallery demo">
+    <div class="live" data-w="1200" data-h="720"><img class="shot" src="img/03_widgets.jpg" alt="Widget gallery demo"><button class="live-btn" title="Opens the running demo over the whole slide">▶ Live app</button><span class="run">cd demos; python 03_widgets.py</span></div>
   </div>
   <aside class="notes">8:30–10:15. Demo 03: change each widget and watch "What the server received". Every widget
     keeps its current value as a prop; that value is what a callback receives.</aside>
@@ -365,8 +400,8 @@ def update(sector):
     return text, fig
 </code></pre>
     <div>
-      <img class="shot" src="img/04_callback.jpg" alt="Callback demo after picking Energy">
-      <div class="take">Input = <code>(id, prop)</code> to watch.<br>Output = <code>(id, prop)</code> to fill with the return value.</div>
+      <div class="live" data-w="1200" data-h="760"><img class="shot" src="img/04_callback.jpg" alt="Callback demo after picking Energy"><button class="live-btn" title="Opens the running demo over the whole slide">▶ Live app</button><span class="run">cd demos; python 04_callback.py</span></div>
+      <div class="take fragment dim">Input = <code>(id, prop)</code> to watch.<br>Output = <code>(id, prop)</code> to fill with the return value.</div>
     </div>
   </div>
   <aside class="notes">10:15–11:45. Demo 04. Pick Energy and show the terminal line "server: update('Energy')": the
@@ -385,30 +420,46 @@ def update(sector):
     <rect x="80" y="8" width="220" height="44" rx="9" class="bxb"/><text x="190" y="36" text-anchor="middle" class="h">Browser</text>
     <rect x="800" y="8" width="220" height="44" rx="9" class="bxg"/><text x="910" y="36" text-anchor="middle" class="h">Dash server</text>
     <line x1="190" y1="52" x2="190" y2="508" class="life"/><line x1="910" y1="52" x2="910" y2="508" class="life"/>
+    <g class="fragment dim">
     <text x="20" y="82" class="s" font-weight="700">PAGE LOAD</text>
     <line x1="195" y1="96" x2="903" y2="96" class="arb" marker-end="url(#s1)"/>
     <text x="550" y="89" text-anchor="middle" class="mono">GET /_dash-layout</text>
     <line x1="905" y1="122" x2="197" y2="122" class="arg" marker-end="url(#s2)"/>
     <text x="550" y="140" text-anchor="middle" class="s">the component tree (JSON)</text>
+    </g>
+    <g class="fragment dim">
     <line x1="195" y1="184" x2="903" y2="184" class="arb" marker-end="url(#s1)"/>
     <text x="550" y="177" text-anchor="middle" class="mono">GET /_dash-dependencies</text>
     <line x1="905" y1="210" x2="197" y2="210" class="arg" marker-end="url(#s2)"/>
     <text x="550" y="228" text-anchor="middle" class="s">the wiring: "sector.value → summary.children, chart.figure"</text>
+    </g>
+    <g class="fragment dim">
     <text x="210" y="256" class="s">+ one initial call of each callback, to fill the outputs</text>
+    </g>
     <line x1="20" y1="272" x2="1080" y2="272" stroke="#d5dbe5" stroke-width="1.5"/>
+    <g class="fragment dim">
     <text x="20" y="300" class="s" font-weight="700">USER PICKS "Energy"</text>
     <circle cx="190" cy="322" r="13" class="num"/><text x="190" y="327" text-anchor="middle" class="numt">1</text>
     <text x="214" y="327" class="s">value changes in the browser; the renderer sees it is an Input</text>
+    </g>
+    <g class="fragment dim">
     <line x1="195" y1="360" x2="903" y2="360" class="arb" marker-end="url(#s1)"/>
     <circle cx="240" cy="360" r="13" class="num"/><text x="240" y="365" text-anchor="middle" class="numt">2</text>
     <text x="550" y="352" text-anchor="middle" class="mono">POST /_dash-update-component {"inputs": [sector.value = "Energy"]}</text>
+    </g>
+    <g class="fragment dim">
     <circle cx="910" cy="400" r="13" class="num" style="fill:#1f8a5b"/><text x="910" y="405" text-anchor="middle" class="numt">3</text>
     <text x="890" y="405" text-anchor="end" class="s">looks up the callback, runs update("Energy")</text>
+    </g>
+    <g class="fragment dim">
     <line x1="905" y1="436" x2="197" y2="436" class="arg" marker-end="url(#s2)"/>
     <circle cx="860" cy="436" r="13" class="num" style="fill:#1f8a5b"/><text x="860" y="441" text-anchor="middle" class="numt">4</text>
     <text x="550" y="456" text-anchor="middle" class="mono">200 {"response": {summary: {children}, chart: {figure}}}</text>
+    </g>
+    <g class="fragment dim">
     <circle cx="190" cy="484" r="13" class="num"/><text x="190" y="489" text-anchor="middle" class="numt">5</text>
     <text x="214" y="489" class="s">renderer sets just those two props; plotly.js redraws. No page reload.</text>
+    </g>
   </svg>
   <aside class="notes">11:45–14:00. Walk 1→5 slowly. The browser already knows the wiring (dependencies) from page
     load, so it knows which request to send. The server is stateless between calls: each POST carries all input
@@ -434,6 +485,7 @@ def update(sector):
 </code></pre>
     </div>
     <div>
+      <div class="fragment dim">
       <p class="small"><span class="tag o">response</span> <code>200</code>, 8.7 KB</p>
 <pre><code class="language-json" data-trim>
 {
@@ -445,9 +497,10 @@ def update(sector):
 }
 </code></pre>
       <p class="small muted">Terminal: <code>server: update(sector='Energy')</code></p>
+      </div>
     </div>
   </div>
-  <div class="take">The browser sends values, the server returns values. The figure travels as JSON every time, so keep returned figures lean.</div>
+  <div class="take fragment dim">The browser sends values, the server returns values. The figure travels as JSON every time, so keep returned figures lean.</div>
   <aside class="notes">14:00–15:00. Both bodies were recorded from Chrome running demo 04 (slides/captured/04.json).
     "output" is the key Dash uses to find the function.</aside>
 </section>
@@ -458,15 +511,15 @@ def update(sector):
   <h2>The callback toolkit</h2>
   <table>
     <tr><th>need</th><th>use</th></tr>
-    <tr><td>several inputs / outputs</td><td>list several <code>Input(...)</code> / <code>Output(...)</code>; return a tuple</td></tr>
-    <tr><td>read a value without triggering (e.g. "Apply" button)</td><td><code>State("id", "prop")</code></td></tr>
-    <tr><td>which input fired?</td><td><code>ctx.triggered_id</code></td></tr>
-    <tr><td>skip the call at page load</td><td><code>prevent_initial_call=True</code></td></tr>
-    <tr><td>leave an output unchanged</td><td>return <code>no_update</code> (or raise <code>PreventUpdate</code>)</td></tr>
-    <tr><td>change part of a big figure</td><td><code>Patch()</code>: send only the diff</td></tr>
-    <tr><td>keep per-user data between calls</td><td><code>dcc.Store</code> (not Python globals)</td></tr>
-    <tr><td>pure UI logic, no Python needed</td><td><code>clientside_callback</code> (runs in JavaScript)</td></tr>
-    <tr><td>long jobs (minutes)</td><td><code>background=True</code> callbacks with a job queue</td></tr>
+    <tr class="fragment dim"><td>several inputs / outputs</td><td>list several <code>Input(...)</code> / <code>Output(...)</code>; return a tuple</td></tr>
+    <tr class="fragment dim"><td>read a value without triggering (e.g. "Apply" button)</td><td><code>State("id", "prop")</code></td></tr>
+    <tr class="fragment dim"><td>which input fired?</td><td><code>ctx.triggered_id</code></td></tr>
+    <tr class="fragment dim"><td>skip the call at page load</td><td><code>prevent_initial_call=True</code></td></tr>
+    <tr class="fragment dim"><td>leave an output unchanged</td><td>return <code>no_update</code> (or raise <code>PreventUpdate</code>)</td></tr>
+    <tr class="fragment dim"><td>change part of a big figure</td><td><code>Patch()</code>: send only the diff</td></tr>
+    <tr class="fragment dim"><td>keep per-user data between calls</td><td><code>dcc.Store</code> (not Python globals)</td></tr>
+    <tr class="fragment dim"><td>pure UI logic, no Python needed</td><td><code>clientside_callback</code> (runs in JavaScript)</td></tr>
+    <tr class="fragment dim"><td>long jobs (minutes)</td><td><code>background=True</code> callbacks with a job queue</td></tr>
   </table>
   <aside class="notes">15:00–16:15. Don't teach each; just show they exist. Two rules worth saying: callbacks should not
     rely on global state (many users, many workers), and each output prop belongs to one callback.</aside>
@@ -497,7 +550,7 @@ def show_history(click):
     h = history[history.cusip == cusip]
     return px.line(h, x="date", y="spread", title=cusip)
 </code></pre>
-    <img class="shot" src="img/05_drilldown.jpg" alt="Drill-down demo after a click">
+    <div class="live" data-w="1200" data-h="760"><img class="shot" src="img/05_drilldown.jpg" alt="Drill-down demo after a click"><button class="live-btn" title="Opens the running demo over the whole slide">▶ Live app</button><span class="run">cd demos; python 05_drilldown.py</span></div>
   </div>
   <aside class="notes">16:15–17:45. Demo 05. The trick is custom_data: attach the key you need (cusip) to every point;
     the click sends it back. Using x/y to find the bond would be fragile.</aside>
@@ -510,23 +563,35 @@ def show_history(click):
   <div class="cols wide-right">
     <svg class="dia" viewBox="0 0 480 470" role="img" aria-label="Steps of a click: plotly event, clickData prop, POST, Python, redraw">
       <defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d2433"/></marker></defs>
+    <g class="fragment dim">
       <rect x="10" y="6" width="460" height="56" rx="9" class="bxb"/>
       <text x="26" y="31" class="h">1  plotly.js</text><text x="26" y="51" class="s">fires a click event for the point under the mouse</text>
       <line x1="240" y1="62" x2="240" y2="84" class="ar" marker-end="url(#d1)"/>
+    </g>
+    <g class="fragment dim">
       <rect x="10" y="88" width="460" height="56" rx="9" class="bxb"/>
       <text x="26" y="113" class="h">2  dcc.Graph</text><text x="26" y="133" class="s">sets its prop clickData = {points: [{x, y, customdata}]}</text>
       <line x1="240" y1="144" x2="240" y2="166" class="ar" marker-end="url(#d1)"/>
+    </g>
+    <g class="fragment dim">
       <rect x="10" y="170" width="460" height="56" rx="9" class="bxb"/>
       <text x="26" y="195" class="h">3  Dash renderer</text><text x="26" y="215" class="s">overview.clickData is an Input → POST it</text>
       <line x1="240" y1="226" x2="240" y2="248" class="ar" marker-end="url(#d1)"/>
+    </g>
+    <g class="fragment dim">
       <rect x="10" y="252" width="460" height="56" rx="9" class="bxg"/>
       <text x="26" y="277" class="h">4  Server</text><text x="26" y="297" class="s">show_history(click): cusip → filter → px.line</text>
       <line x1="240" y1="308" x2="240" y2="330" class="ar" marker-end="url(#d1)"/>
+    </g>
+    <g class="fragment dim">
       <rect x="10" y="334" width="460" height="56" rx="9" class="bxg"/>
       <text x="26" y="359" class="h">5  Response</text><text x="26" y="379" class="s">{"detail": {"figure": …}}, 17.6 KB</text>
       <line x1="240" y1="390" x2="240" y2="412" class="ar" marker-end="url(#d1)"/>
+    </g>
+    <g class="fragment dim">
       <rect x="10" y="416" width="460" height="48" rx="9" class="bxb"/>
       <text x="26" y="446" class="h">6  plotly.js redraws the right-hand chart</text>
+    </g>
     </svg>
     <div>
       <p class="small"><span class="tag">request</span> captured from demo 05 (trimmed)</p>
@@ -545,7 +610,7 @@ def show_history(click):
   "changedPropIds": ["overview.clickData"]
 }
 </code></pre>
-      <div class="take">A click is just another prop change. Same loop as the dropdown: any chart can drive any other.</div>
+      <div class="take fragment dim">A click is just another prop change. Same loop as the dropdown: any chart can drive any other.</div>
     </div>
   </div>
   <aside class="notes">17:45–20:15. The point: there is no special drill-down machinery. A click sets a prop in the
@@ -560,17 +625,18 @@ def show_history(click):
   <div class="cols">
     <div>
       <ol class="small">
-        <li>Open <code>demos/</code> in VS Code, select the venv</li>
-        <li>Copilot Chat → <b>Agent</b> mode (it can create and run files)</li>
-        <li>Describe <b>one</b> feature in plain words</li>
-        <li>Run, look, ask for the next change</li>
-        <li>Paste errors from the Dash error panel back into the chat</li>
+        <li class="fragment dim">Open <code>demos/</code> in VS Code, select the venv</li>
+        <li class="fragment dim">Copilot Chat → <b>Agent</b> mode (it can create and run files)</li>
+        <li class="fragment dim">Describe <b>one</b> feature in plain words</li>
+        <li class="fragment dim">Run, look, ask for the next change</li>
+        <li class="fragment dim">Paste errors from the Dash error panel back into the chat</li>
       </ol>
-      <div class="take">You describe the <b>what</b> (ids, inputs, outputs). Copilot writes the boilerplate.</div>
+      <div class="take fragment dim">You describe the <b>what</b> (ids, inputs, outputs). Copilot writes the boilerplate.</div>
     </div>
-    <div class="card"><b>Prompt 1</b><br>Create <code>my_app.py</code>: a Dash app showing a scatter of <code>bonds</code>, maturity vs spread, coloured by sector, issuer on hover.
-      <br><br><b>Prompt 2</b><br>Add a sector dropdown above the chart (default Banks). When it changes, show only that sector and a sentence with the count and average spread.
-      <br><br><b>Prompt 3</b><br>When I click a bond, show its spread history from <code>history</code> in a second chart. Use <code>custom_data</code> for the cusip.
+    <div class="card">
+      <div class="fragment dim"><b>Prompt 1</b><br>Create <code>my_app.py</code>: a Dash app showing a scatter of <code>bonds</code>, maturity vs spread, coloured by sector, issuer on hover.</div>
+      <div class="fragment dim" style="margin-top:.8em"><b>Prompt 2</b><br>Add a sector dropdown above the chart (default Banks). When it changes, show only that sector and a sentence with the count and average spread.</div>
+      <div class="fragment dim" style="margin-top:.8em"><b>Prompt 3</b><br>When I click a bond, show its spread history from <code>history</code> in a second chart. Use <code>custom_data</code> for the cusip.</div>
     </div>
   </div>
   <aside class="notes">20:15–23:00. Live demo with demos/prompts.md. Run each step. If time is short, do prompts 1 and 3
@@ -597,9 +663,9 @@ def show_history(click):
     </div>
     <div class="card"><b>Why it matters</b>
       <ul>
-        <li>Models have seen years of <b>old</b> Dash code: <code>dash_core_components</code>, <code>app.run_server</code>, <code>@app.callback</code></li>
-        <li>Naming the data and its columns stops invented files</li>
-        <li>"List the Input → Output pairs" lets you check the wiring before reading the code</li>
+        <li class="fragment dim">Models have seen years of <b>old</b> Dash code: <code>dash_core_components</code>, <code>app.run_server</code>, <code>@app.callback</code></li>
+        <li class="fragment dim">Naming the data and its columns stops invented files</li>
+        <li class="fragment dim">"List the Input → Output pairs" lets you check the wiring before reading the code</li>
       </ul>
     </div>
   </div>
@@ -611,8 +677,7 @@ def show_history(click):
 <section>
   <div class="kicker">6 · Showcase</div>
   <h2>A bond monitor in ~140 lines</h2>
-  <img class="shot" src="img/06_full_click.jpg" alt="Full Dash demo app" style="max-height:470px;width:auto;display:block;margin:0 auto">
-  <p class="small muted" style="text-align:center">demos/06_full_app.py</p>
+  <div class="live" data-w="1400" data-h="900" style="width:700px;margin:0 auto"><img class="shot" src="img/06_full_click.jpg" alt="Full Dash demo app"><button class="live-btn" title="Opens the running demo over the whole slide">▶ Live app</button><span class="run">cd demos; python 06_full_app.py</span></div>
   <aside class="notes">24:15–28:00. Demo 06 live. Order: (1) untick a sector: KPIs, scatter, grid and sector chart all
     update from one callback; (2) click a bubble: history on the right; (3) select a grid row: same chart, via
     ctx.triggered_id; (4) switch Live on: dcc.Interval re-prices every 2 s; (5) Download CSV.</aside>
@@ -624,14 +689,14 @@ def show_history(click):
   <h2>What's inside, mapped to today's ideas</h2>
   <table>
     <tr><th>feature</th><th>how</th></tr>
-    <tr><td>Filters drive KPIs, scatter, grid, sector chart</td><td>one callback, 4 Inputs → 8 Outputs</td></tr>
-    <tr><td>Click a bubble <i>or</i> select a grid row → history</td><td><code>clickData</code> + <code>selectedRows</code>, <code>ctx.triggered_id</code></td></tr>
-    <tr><td>Sortable, filterable table</td><td><code>dash_ag_grid.AgGrid</code></td></tr>
-    <tr><td>Live re-pricing every 2 s</td><td><code>dcc.Interval</code> as an Input; a toggle enables it</td></tr>
-    <tr><td>Download the filtered bonds</td><td><code>dcc.Download</code> + <code>State</code> + <code>prevent_initial_call</code></td></tr>
-    <tr><td>Styling</td><td><code>assets/style.css</code>, picked up automatically</td></tr>
+    <tr class="fragment dim"><td>Filters drive KPIs, scatter, grid, sector chart</td><td>one callback, 4 Inputs → 8 Outputs</td></tr>
+    <tr class="fragment dim"><td>Click a bubble <i>or</i> select a grid row → history</td><td><code>clickData</code> + <code>selectedRows</code>, <code>ctx.triggered_id</code></td></tr>
+    <tr class="fragment dim"><td>Sortable, filterable table</td><td><code>dash_ag_grid.AgGrid</code></td></tr>
+    <tr class="fragment dim"><td>Live re-pricing every 2 s</td><td><code>dcc.Interval</code> as an Input; a toggle enables it</td></tr>
+    <tr class="fragment dim"><td>Download the filtered bonds</td><td><code>dcc.Download</code> + <code>State</code> + <code>prevent_initial_call</code></td></tr>
+    <tr class="fragment dim"><td>Styling</td><td><code>assets/style.css</code>, picked up automatically</td></tr>
   </table>
-  <div class="take">Same loop everywhere: a prop changes in the browser → POST → your function → new props.</div>
+  <div class="take fragment dim">Same loop everywhere: a prop changes in the browser → POST → your function → new props.</div>
   <aside class="notes">28:00–29:00. Everything here is the loop from slide 11 with different props.</aside>
 </section>
 
@@ -642,16 +707,16 @@ def show_history(click):
   <div class="cols">
     <div class="card"><b>Deploy</b>
       <ul>
-        <li><code>server = app.server</code> → <code>gunicorn app:server</code></li>
-        <li>several workers ⇒ no globals; share state via <code>dcc.Store</code>, a cache or a DB</li>
-        <li>cache slow loads (<code>flask-caching</code>)</li>
+        <li class="fragment dim"><code>server = app.server</code> → <code>gunicorn app:server</code></li>
+        <li class="fragment dim">several workers ⇒ no globals; share state via <code>dcc.Store</code>, a cache or a DB</li>
+        <li class="fragment dim">cache slow loads (<code>flask-caching</code>)</li>
       </ul>
     </div>
     <div class="card"><b>Grow</b>
       <ul>
-        <li>multi-page apps: <code>use_pages=True</code> + <code>pages/</code></li>
-        <li>big data on charts: <code>Patch</code>, <code>plotly-resampler</code></li>
-        <li>docs: <code>dash.plotly.com</code> · AG Grid: <code>dash.plotly.com/dash-ag-grid</code></li>
+        <li class="fragment dim">multi-page apps: <code>use_pages=True</code> + <code>pages/</code></li>
+        <li class="fragment dim">big data on charts: <code>Patch</code>, <code>plotly-resampler</code></li>
+        <li class="fragment dim">docs: <code>dash.plotly.com</code> · AG Grid: <code>dash.plotly.com/dash-ag-grid</code></li>
       </ul>
     </div>
   </div>
@@ -660,6 +725,7 @@ def show_history(click):
 </section>
 
 </div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.1.0/plotly.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/highlight.min.js"></script>
@@ -668,6 +734,39 @@ def show_history(click):
     width: 1280, height: 720, margin: 0.05, hash: true, slideNumber: "c/t",
     transition: "none", pdfSeparateFragments: false, plugins: [RevealHighlight, RevealNotes],
   });
+
+  // Slide 3: draw the live Plotly figure once its slide is shown (it needs a visible box to size itself).
+  let figDrawn = false;
+  function drawFig() {
+    const el = document.getElementById("fig01");
+    if (figDrawn || !el || !el.offsetWidth || !window.Plotly) return;
+    const fig = JSON.parse(document.getElementById("fig01-data").textContent);
+    Plotly.newPlot(el, fig.data, Object.assign({}, fig.layout, {autosize: true}),
+                   {responsive: true, displaylogo: false});
+    figDrawn = true;
+  }
+  Reveal.on("ready", drawFig);
+  Reveal.on("slidechanged", drawFig);
+
+  // "Live app": swap a screenshot for the running demo (http://127.0.0.1:8050), scaled to the same box.
+  // Another port: run the demo with PORT=8051 and open index.html?port=8051
+  const LIVE_PORT = new URLSearchParams(location.search).get("port") || "8050";
+  // The app fills the whole slide area; "✕ Back to slide" (or changing slide) closes it.
+  function closeLive() {
+    document.querySelectorAll(".live-overlay").forEach(o => o.remove());
+    window.focus();                       // arrow keys drive the slides again
+  }
+  document.querySelectorAll(".live-btn").forEach(btn => btn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    closeLive();
+    const ov = document.createElement("div");
+    ov.className = "live-overlay";
+    ov.innerHTML = `<iframe src="http://127.0.0.1:${LIVE_PORT}/"></iframe>
+      <button class="live-close">✕ Back to slide</button>`;
+    ov.querySelector(".live-close").addEventListener("click", e => { e.stopPropagation(); closeLive(); });
+    document.querySelector(".reveal .slides").appendChild(ov);
+  }));
+  Reveal.on("slidechanged", closeLive);
 </script>
 </body>
 </html>
