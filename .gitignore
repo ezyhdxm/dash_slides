@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 demos/plotly_only.html
 .DS_Store
+.*.log

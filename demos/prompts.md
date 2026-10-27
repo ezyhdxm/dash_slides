@@ -1,9 +1,17 @@
 # Prompts for the VS Code + Copilot demo
 
-Before you start:
-1. Open the `demos/` folder in VS Code (Copilot reads `.github/copilot-instructions.md` from the workspace root).
-2. Select the Python environment that has `requirements.txt` installed.
-3. Open Copilot Chat and pick **Agent** mode, so it can create files and run them.
+Before you start: open the `demos/` folder itself in VS Code, so Copilot reads `.github/copilot-instructions.md`
+(it only looks at the workspace root). Use Copilot Chat in Agent mode, so it can create and run files.
+
+The two prompts on the slide:
+> Build a Dash app for the bonds data: filter by sector, show spread vs maturity, and let me click a bond to see
+> its history.
+
+> Add a sector dropdown (id `sector`, default Banks). When it changes, filter the scatter and show the count and
+> average spread under it. When I click a point, use `custom_data` to get the cusip and plot its history from
+> `history` in a second chart.
+
+Or build it up one step at a time:
 
 Each prompt below builds on the one before it. After each one, run the file and look at the result
 before you ask for the next change.
@@ -13,8 +21,9 @@ before you ask for the next change.
 > with the issuer on hover. Add a title above the chart.
 
 ## 2. Add a widget and a callback
-> Add a dropdown of sectors above the chart, defaulting to "Banks". When it changes, show only that sector's
-> bonds, and show a sentence under the dropdown with the count and the average spread.
+> Add a dropdown of sectors above the chart, defaulting to "Banks", and a checklist of ratings (AA, A, BBB, BB)
+> with A and BBB ticked. When either changes, show only the matching bonds, and show a sentence under them with
+> the count and the average spread.
 
 ## 3. Drill down on click
 > When I click a bond on the scatter, show its spread history from `history` in a second chart to the right.

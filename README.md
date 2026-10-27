@@ -7,61 +7,70 @@ and shows what happens behind the scenes.
 
 | path | what |
 |---|---|
-| `slides/index.html` | the deck (reveal.js), interactive. Open it in a browser. `S` opens the speaker notes, which include timings |
-| `slides/dash_in_30_minutes.pdf` | the same deck as a PDF, a backup that works offline |
+| `slides/index.html` | the deck (reveal.js, 13 slides). Interactive: open it in Chrome. `S` opens the speaker notes, which include timings |
+| `slides/dash_in_30_minutes.pdf` | the same deck as a PDF, a backup that works offline (not interactive) |
 | `slides/img/` | screenshots of the demos, taken in headless Chrome |
-| `slides/captured/` | the real request and response bodies shown on slides 12 and 15, recorded from Chrome |
+| `demos/run_all.py` | starts every demo app at once, each on its own port, for the slides' **Live app** buttons |
 | `demos/data.py` | a synthetic bond universe: 60 bonds and one year of daily spreads, made in memory |
 | `demos/01_plotly_only.py` | Plotly alone: writes `plotly_only.html`. No server |
-| `demos/02_hello_dash.py` | the smallest app: a layout with a Plotly figure |
+| `demos/02_hello_dash.py` | the smallest app: a layout with a Plotly chart |
 | `demos/03_widgets.py` | a tour of the built-in widgets. One callback echoes every value |
-| `demos/04_callback.py` | a dropdown drives a sentence and a chart. Each pick prints a line in the terminal |
+| `demos/04_callback.py` | a dropdown and a checklist drive a sentence and a chart (two Inputs, two Outputs) |
 | `demos/05_drilldown.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
-| `demos/06_full_app.py` | the showcase: filters, KPIs, AG Grid, drill-down from chart or grid, live updates, CSV download |
 | `demos/prompts.md` | the prompts for the VS Code + Copilot demo |
-| `demos/.github/copilot-instructions.md` | the rules Copilot follows in `demos/` |
+| `demos/.github/copilot-instructions.md` | an example rules file that Copilot follows in `demos/` |
 
 ## Setup
 
 ```bash
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cd demos
-python 04_callback.py                                  # then open http://127.0.0.1:8050
 ```
 
-Run each demo from inside `demos/`, so that `from data import ...` and `assets/` resolve. Only one app can use
-port 8050 at a time, so stop one demo (Ctrl+C) before starting the next. The demos were tested with Dash 4.4.1,
-Plotly 6.8.0, pandas 3.0.6 and dash-ag-grid 35.3.0.
+Tested with Dash 4.4.1, Plotly 6.8.0 and pandas 3.0.6.
 
-The deck loads reveal.js from a CDN, so it needs internet. Without internet, use the PDF.
+## Before the talk
+
+```bash
+python demos/run_all.py
+```
+
+It starts the four demo apps and prints a table when they are all ready. Leave that window open during the talk;
+Ctrl+C stops every app.
+
+| slide | demo | address |
+|---|---|---|
+| 5 | `02_hello_dash.py` | http://127.0.0.1:8052 |
+| 7 | `03_widgets.py` | http://127.0.0.1:8053 |
+| 8 | `04_callback.py` | http://127.0.0.1:8054 |
+| 10 | `05_drilldown.py` | http://127.0.0.1:8055 |
+
+If a port is already taken, it says which one and stops, so you can close whatever is using it. Each app's output
+(for example the line demo 04 prints on every change) goes to `demos/.<name>.log`. To show that output live, stop
+the launcher and run the demo on its own in a terminal (`cd demos; python 04_callback.py`, on port 8050).
+
+The deck loads reveal.js and plotly.js from a CDN, so it needs internet. Without internet, use the PDF.
 
 ## Presenting
 
-- **Open the deck:** double-click `slides/index.html` (or open it with Chrome). Press `F` for full screen and `S`
-  for the speaker notes window.
+- **Open the deck:** open `slides/index.html` in Chrome. Press `F` for full screen and `S` for the speaker notes
+  window.
 - **Stepping:** each bullet, table row, card and diagram part starts greyed out. Press → or Space to light up the
-  next one, and ← to go back. The sequence diagrams on slides 5, 11 and 15 build one arrow at a time. On slides
-  6, 10 and 14 the same keys step through highlighted lines of code.
+  next one, and ← to go back. On slides 5 and 10 the same keys step through highlighted lines of code; on slide 8
+  they colour each Input with its argument, then each returned value with its Output.
 - **Slide 3 is a live Plotly chart:** zoom, hover and click the legend. No server is needed.
-- **Live apps:** slides 6, 9, 10, 14 and 18 have a **▶ Live app** button. Start that slide's demo first (the
-  command is under the screenshot, e.g. `cd demos; python 04_callback.py`). The button then opens the running
-  app over the whole slide, and you can click and type in it. **✕ Back to slide** (or moving to another slide)
-  closes it, and the arrow keys work again.
-- **Port 8050 busy?** Dash reads the `PORT` environment variable: run `PORT=8051 python 04_callback.py` and open
-  `slides/index.html?port=8051`.
+- **Slides 6 and 7:** the cards' small animations start when each card is stepped in.
+- **Live apps:** slides 5, 7, 8 and 10 have a **▶ Live app** button. It opens the running demo over the whole
+  slide, and you can click and type in it. **✕ Back to slide** (or moving to another slide) closes it, and the
+  arrow keys work again.
 
 ## Running order (30 min)
 
-| time | slides | demo |
+| time | slides | live |
 |---|---|---|
-| 0:00 | 1–2 title, plan | |
-| 1:15 | 3–5 Plotly alone vs Dash (the architecture diagram) | `01` |
-| 5:15 | 6–9 layout, figures, widgets | `02`, `03` |
-| 10:15 | 10–13 callbacks, the round trip, the real JSON, the toolkit | `04` with DevTools → Network open |
-| 16:15 | 14–15 click to drill down, behind the scenes | `05` |
-| 20:15 | 16–17 VS Code + Copilot | prompts 1–3 from `demos/prompts.md` |
-| 24:15 | 18–19 showcase | `06` |
-| 29:00 | 20 next steps, questions | |
-
-On slides 6, 10 and 14, the arrow keys step through highlighted lines of the code.
+| 0:00 | 1–2 title, agenda | |
+| 1:00 | 3–4 Plotly alone (live chart), Plotly vs Dash diagram | slide 3 chart |
+| 6:00 | 5–7 the smallest app, charts inside Dash, widgets | Live app on 5 and 7 |
+| 13:00 | 8–10 a callback, the round trip, click to drill down | Live app on 8 and 10 |
+| 20:00 | 11 VS Code + Copilot | `demos/prompts.md` |
+| 24:00 | 12–13 showcase (your dashboard), other tools | |
