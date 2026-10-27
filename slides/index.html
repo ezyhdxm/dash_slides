@@ -71,6 +71,8 @@
   svg.dia .numt { fill: #fff; font-size: 15px; font-weight: 700; }
   .title-slide h1 { margin-top: 1.4em; }
   .title-slide .sub { color: var(--muted); font-size: .9em; }
+  .tools td:nth-child(2), .tools td:nth-child(4) { background: #e8eef9; }
+  .tools th:nth-child(2), .tools th:nth-child(4) { background: #d6e1f4; }
   .reveal .slide-number { font-size: 14px; background: transparent; color: var(--muted); }
 
   /* step-through: items start greyed out and light up one per click */
@@ -172,7 +174,7 @@
   .a-tick1 { animation: tick1 5s steps(1) infinite; }
   @keyframes tick1 { 0%, 49% { opacity: 0; } 50%, 89% { opacity: 1; } 90%, 100% { opacity: 0; } }
   .a-radio { animation: radio 5s ease-in-out infinite; }
-  @keyframes radio { 0%, 40% { transform: translate(0px, 0px); } 50%, 90% { transform: translate(100px, 0px); } 100% { transform: translate(0px, 0px); } }
+  @keyframes radio { 0%, 40% { transform: translate(0px, 0px); } 50%, 90% { transform: translate(70px, 0px); } 100% { transform: translate(0px, 0px); } }
 
   .a-sl-thumb { animation: slThumb 4s ease-in-out infinite alternate; }
   @keyframes slThumb { 0% { transform: translate(-60px, 0px); } 100% { transform: translate(50px, 0px); } }
@@ -235,7 +237,7 @@
   <ul class="agenda">
     <li><span class="n">1</span>Plotly vs Dash: why a server <span class="t">5 min</span></li>
     <li><span class="n">2</span>Building a page: layout, charts, widgets <span class="t">7 min</span></li>
-    <li><span class="n">3</span>Callbacks, and clicking a chart to drill down <span class="t">8 min</span></li>
+    <li><span class="n">3</span>Callbacks, and clicking one chart to update another <span class="t">8 min</span></li>
     <li><span class="n">4</span>Letting Copilot write Dash for you <span class="t">4 min</span></li>
     <li><span class="n">5</span>Showcase, and other tools <span class="t">5 min</span></li>
   </ul>
@@ -256,7 +258,7 @@ fig = px.scatter(bonds, x="maturity", y="spread",
                  color="sector", hover_name="issuer")
 fig.write_html("plotly_only.html")
 </code></pre>
-      <div class="card" style="margin-top:14px"><b>Needs Python again</b>
+      <div class="card" style="margin-top:14px"><div class="fragment dim"><b>Needs Python again</b></div>
         <ul>
           <li class="fragment dim">recomputation</li>
           <li class="fragment dim">call a model, run a pricer</li>
@@ -394,7 +396,7 @@ dcc.Graph(
 )
 </code></pre>
       <p class="small" style="margin-top:18px"><b>A chart also tells the app what the user does to it.</b></p>
-      <p class="small fragment dim">Later we'll show how to use <code>clickData</code> to drill into another chart.</p>
+      <p class="small fragment dim">Later we'll show how to use <code>clickData</code> to update another chart when a point is clicked.</p>
     </div>
     <div class="fcards g2">
       <div class="fcard fragment dim" data-fragment-index="0">
@@ -485,20 +487,23 @@ dcc.Graph(
       <div class="name">dcc.Dropdown</div>
     </div>
     <div class="fcard fragment dim">
-      <svg viewBox="0 0 240 100" aria-label="Checkboxes tick on and off; a radio choice moves">
-        <g font-size="13">
-          <rect x="22" y="10" width="14" height="14" rx="3" fill="#fff" stroke="#5b6578"/><text x="42" y="22">AA</text>
-          <rect x="92" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="112" y="22">A</text>
-          <rect x="162" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="182" y="22">BBB</text>
-          <path d="M95,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
-          <path d="M165,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
-          <g opacity="0" class="a-tick1"><rect x="22" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><path d="M25,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/></g>
-          <circle cx="29" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="42" y="73">spread</text>
-          <circle cx="129" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="142" y="73">coupon</text>
-          <circle cx="29" cy="68" r="3.5" fill="#2f5bd3" class="a-radio"/>
+      <svg viewBox="0 0 240 100" aria-label="Checklist: several boxes ticked. Radio items: exactly one choice, which moves">
+        <g font-size="12">
+          <text x="8" y="21" fill="#5b6578" font-weight="700">several</text>
+          <rect x="64" y="10" width="14" height="14" rx="3" fill="#fff" stroke="#5b6578"/><text x="83" y="22">AA</text>
+          <rect x="118" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="137" y="22">A</text>
+          <rect x="166" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="185" y="22">BBB</text>
+          <path d="M121,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
+          <path d="M169,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
+          <g opacity="0" class="a-tick1"><rect x="64" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><path d="M67,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/></g>
+          <line x1="8" y1="44" x2="232" y2="44" stroke="#e1e6ee"/>
+          <text x="8" y="73" fill="#5b6578" font-weight="700">only one</text>
+          <circle cx="71" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="83" y="73">spread</text>
+          <circle cx="141" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="153" y="73">coupon</text>
+          <circle cx="71" cy="68" r="3.5" fill="#2f5bd3" class="a-radio"/>
         </g>
       </svg>
-      <div class="what">Tick options, or choose one: the app gets the ticked / chosen ones</div>
+      <div class="what">Checklist: tick several. Radio: exactly one. The app gets what is selected</div>
       <div class="name">dcc.Checklist · dcc.RadioItems</div>
     </div>
     <div class="fcard fragment dim">
@@ -650,12 +655,13 @@ def update(<span class="fragment tint t-or" data-fragment-index="0">sector</span
     <g class="fragment dim">
       <circle cx="190" cy="100" r="16" class="num"/><text x="190" y="106" text-anchor="middle" class="numt">1</text>
       <text x="218" y="98" style="font-size:19px">You pick <tspan font-weight="700">Energy</tspan> in the dropdown.</text>
-      <text x="218" y="122" class="s" style="font-size:16px">The browser knows a callback listens to that dropdown.</text>
+      <text x="218" y="122" class="s" style="font-size:16px">The rating checklist still has A and BBB ticked. A callback listens to both.</text>
     </g>
     <g class="fragment dim">
       <line x1="196" y1="178" x2="902" y2="178" class="arb" marker-end="url(#s1)"/>
       <circle cx="250" cy="178" r="16" class="num"/><text x="250" y="184" text-anchor="middle" class="numt">2</text>
-      <text x="560" y="166" text-anchor="middle" style="font-size:18px">"Please run update with sector = Energy, ratings = [A, BBB]"</text>
+      <text x="560" y="152" text-anchor="middle" style="font-size:18px">"Please run update with sector = Energy, ratings = [A, BBB]"</text>
+      <text x="560" y="206" text-anchor="middle" class="s" style="font-size:15px">the request carries the current value of every input: the new one and the unchanged one</text>
     </g>
     <g class="fragment dim">
       <circle cx="910" cy="240" r="16" class="num" style="fill:#1f8a5b"/><text x="910" y="246" text-anchor="middle" class="numt">3</text>
@@ -679,15 +685,14 @@ def update(<span class="fragment tint t-or" data-fragment-index="0">sector</span
     open DevTools → Network in the Live app on the previous slide: each change is one POST to /_dash-update-component.</aside>
 </section>
 
-<!-- ======================================================== 10. drilldown -->
+<!-- ======================================================== 10. click one chart, update another -->
 <section>
-  <div class="kicker">3 · Click to drill down</div>
+  <div class="kicker">3 · Click one chart, update another</div>
   <h2>Click a bond, see its history</h2>
   <div class="cols wide-left">
-<pre><code class="language-python" data-trim data-line-numbers="1-3|5-8|10-11|12-15|16-18">
-overview = px.scatter(bonds, x="maturity", y="spread",
+<pre><code class="nohighlight" data-noescape>overview = px.scatter(bonds, x="maturity", y="spread",
                       color="rating", hover_name="issuer",
-                      custom_data=["cusip"])   # rides along with each point
+                      <span class="fragment tint t-or">custom_data=["cusip"]</span>)   # rides along with each point
 
 app.layout = html.Div([
     dcc.Graph(id="overview", figure=overview),
@@ -695,18 +700,18 @@ app.layout = html.Div([
 ])
 
 @callback(Output("detail", "figure"),
-          Input("overview", "clickData"))
+          <span class="fragment tint t-or">Input("overview", "clickData")</span>)
 def show_history(click):
     if click is None:                     # page load: nothing clicked
         cusip = bonds.cusip.iloc[0]
     else:
-        cusip = click["points"][0]["customdata"][0]
+        cusip = <span class="fragment tint t-or">click["points"][0]["customdata"][0]</span>
     h = history[history.cusip == cusip]
-    return px.line(h, x="date", y="spread", title=cusip)
-</code></pre>
-    <div class="live"><img class="shot" src="img/05_drilldown.jpg" alt="Drill-down demo after a click"><button class="live-btn" data-port="8055">▶ Live app</button><span class="run">demos/05_drilldown.py</span></div>
+    return px.line(h, x="date", y="spread", title=cusip)</code></pre>
+    <div class="live"><img class="shot" src="img/05_click_detail.jpg" alt="After clicking a bond, its history appears on the right"><button class="live-btn" data-port="8055">▶ Live app</button><span class="run">demos/05_click_detail.py</span></div>
   </div>
-  <aside class="notes">17:30–20:00. The trick is custom_data: attach the key you need (cusip) to every point, and the
+  <aside class="notes">17:30–20:00. Three highlights, in order: attach the bond's key to every point (custom_data);
+    listen to the chart's clicks (clickData); read the key back out of the click. The trick is custom_data: attach the key you need (cusip) to every point, and the
     click sends it back. Behind the scenes, a click is just another change the browser reports: the chart's
     clickData changes, it is an Input, so the same round trip as the last slide runs. Using x/y to find the bond
     would be fragile.</aside>
@@ -739,15 +744,7 @@ def show_history(click):
 <section>
   <div class="kicker">5 · Showcase</div>
   <h2>Showcase: a real dashboard</h2>
-  <p class="small muted">Switching to the dashboard now. Things to look for:</p>
-  <ul>
-    <li class="fragment dim">filters that drive several charts and tables at once</li>
-    <li class="fragment dim">clicking one chart to update another</li>
-    <li class="fragment dim">tables you can sort and filter</li>
-    <li class="fragment dim">live updates on a timer</li>
-  </ul>
-  <div class="take fragment dim"><b>Make it your own:</b> CSS files in an <code>assets/</code> folder are picked up
-    automatically, and component libraries such as Dash Bootstrap or Dash Mantine add themes and ready-made layouts.</div>
+  <p class="muted">Switching to the dashboard now.</p>
   <aside class="notes">24:00–27:00. Switch to your dashboard.</aside>
 </section>
 
@@ -755,7 +752,7 @@ def show_history(click):
 <section>
   <div class="kicker">5 · Other tools</div>
   <h2>Dash and other Python app tools</h2>
-  <table>
+  <table class="tools">
     <tr><th style="width:15%">tool</th><th style="width:27%">best fit</th><th style="width:31%">front-end model</th><th>server</th></tr>
     <tr class="fragment dim"><td><b>Dash</b></td><td>production dashboards and apps with clear interactivity; Plotly charts</td>
       <td>the page is described in Python; the browser holds widget values and asks the server when an input changes</td>

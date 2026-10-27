@@ -7,7 +7,7 @@ Leave it running; press Ctrl+C to stop all the apps.
     slide 5   02_hello_dash.py   http://127.0.0.1:8052
     slide 7   03_widgets.py      http://127.0.0.1:8053
     slide 8   04_callback.py     http://127.0.0.1:8054
-    slide 10  05_drilldown.py    http://127.0.0.1:8055
+    slide 10  05_click_detail.py  http://127.0.0.1:8055
 """
 import os
 import signal
@@ -19,7 +19,7 @@ import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DEMOS = [("02_hello_dash.py", 8052), ("03_widgets.py", 8053), ("04_callback.py", 8054), ("05_drilldown.py", 8055)]
+DEMOS = [("02_hello_dash.py", 8052), ("03_widgets.py", 8053), ("04_callback.py", 8054), ("05_click_detail.py", 8055)]
 WINDOWS = os.name == "nt"
 
 

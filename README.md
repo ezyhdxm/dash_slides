@@ -16,7 +16,7 @@ and shows what happens behind the scenes.
 | `demos/02_hello_dash.py` | the smallest app: a layout with a Plotly chart |
 | `demos/03_widgets.py` | a tour of the built-in widgets. One callback echoes every value |
 | `demos/04_callback.py` | a dropdown and a checklist drive a sentence and a chart (two Inputs, two Outputs) |
-| `demos/05_drilldown.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
+| `demos/05_click_detail.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
 | `demos/prompts.md` | the prompts for the VS Code + Copilot demo |
 | `demos/.github/copilot-instructions.md` | an example rules file that Copilot follows in `demos/` |
 
@@ -43,7 +43,7 @@ Ctrl+C stops every app.
 | 5 | `02_hello_dash.py` | http://127.0.0.1:8052 |
 | 7 | `03_widgets.py` | http://127.0.0.1:8053 |
 | 8 | `04_callback.py` | http://127.0.0.1:8054 |
-| 10 | `05_drilldown.py` | http://127.0.0.1:8055 |
+| 10 | `05_click_detail.py` | http://127.0.0.1:8055 |
 
 If a port is already taken, it says which one and stops, so you can close whatever is using it. Each app's output
 (for example the line demo 04 prints on every change) goes to `demos/.<name>.log`. To show that output live, stop
@@ -56,8 +56,9 @@ The deck loads reveal.js and plotly.js from a CDN, so it needs internet. Without
 - **Open the deck:** open `slides/index.html` in Chrome. Press `F` for full screen and `S` for the speaker notes
   window.
 - **Stepping:** each bullet, table row, card and diagram part starts greyed out. Press → or Space to light up the
-  next one, and ← to go back. On slides 5 and 10 the same keys step through highlighted lines of code; on slide 8
-  they colour each Input with its argument, then each returned value with its Output.
+  next one, and ← to go back. On slide 5 the same keys step through highlighted lines of code; on slide 8 they
+  colour each Input with its argument, then each returned value with its Output; on slide 10 they highlight the
+  three pieces of the click logic.
 - **Slide 3 is a live Plotly chart:** zoom, hover and click the legend. No server is needed.
 - **Slides 6 and 7:** the cards' small animations start when each card is stepped in.
 - **Live apps:** slides 5, 7, 8 and 10 have a **▶ Live app** button. It opens the running demo over the whole
@@ -71,6 +72,6 @@ The deck loads reveal.js and plotly.js from a CDN, so it needs internet. Without
 | 0:00 | 1–2 title, agenda | |
 | 1:00 | 3–4 Plotly alone (live chart), Plotly vs Dash diagram | slide 3 chart |
 | 6:00 | 5–7 the smallest app, charts inside Dash, widgets | Live app on 5 and 7 |
-| 13:00 | 8–10 a callback, the round trip, click to drill down | Live app on 8 and 10 |
+| 13:00 | 8–10 a callback, the round trip, click one chart to update another | Live app on 8 and 10 |
 | 20:00 | 11 VS Code + Copilot | `demos/prompts.md` |
 | 24:00 | 12–13 showcase (your dashboard), other tools | |

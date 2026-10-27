@@ -1,6 +1,6 @@
-"""Click a point on one chart, see its detail in another: dcc.Graph's clickData as a callback Input.
+"""Click a point on one chart, see its details in another: dcc.Graph's clickData as a callback Input.
 
-Run:  python 05_drilldown.py   ->  http://127.0.0.1:8050
+Run:  python 05_click_detail.py   ->  http://127.0.0.1:8050
 Click any bond on the left: its one-year spread history appears on the right.
 """
 from dash import Dash, html, dcc, callback, Output, Input
@@ -14,7 +14,7 @@ overview = px.scatter(bonds, x="maturity", y="spread", color="rating", hover_nam
                       title="All bonds: click one")
 
 app.layout = html.Div([
-    html.H2("Click a bond to drill down"),
+    html.H2("Click a bond to see its history"),
     html.Div([
         dcc.Graph(id="overview", figure=overview, style={"flex": 1}),
         dcc.Graph(id="detail", style={"flex": 1}),
