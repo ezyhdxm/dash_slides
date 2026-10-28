@@ -1492,9 +1492,9 @@ if __name__ == &quot;__main__&quot;:
   Reveal.initialize({
     width: 1280, height: 720, margin: 0.05, hash: true, slideNumber: "c/t",
     transition: "none", pdfSeparateFragments: false, plugins: [RevealHighlight, RevealNotes, RevealMenu],
-    // M or the ☰ button (bottom left) lists every slide, code slides included
-    menu: { side: "left", titleSelector: "h1, h2", themes: false, transitions: false, loadIcons: false,
-            markers: true, openOnInit: false },
+    // M or the ☰ button (bottom left) lists the 13 talk slides; the appendix code slides are left out
+    menu: { side: "left", titleSelector: ":scope:not(.detail) h1, :scope:not(.detail) h2", hideMissingTitles: true,
+            themes: false, transitions: false, loadIcons: false, markers: true, openOnInit: false },
   });
 
   // Slide 3: draw the live Plotly chart once its slide is shown (it needs a visible box to size itself).

@@ -65,7 +65,7 @@ The deck loads reveal.js and plotly.js from a CDN, so it needs internet. Without
 - **Slides 6 and 7:** the cards' small animations start when each card is stepped in. **Click a card** to open its
   code slide in the appendix: the code of a small app on the left (→ highlights the component, then the callback
   that reads its value) and the animation on the right. **← Back** returns to the same step.
-- **Menu:** `M` or the ☰ button (bottom left) lists every slide, the code slides included, to jump to one.
+- **Menu:** `M` or the ☰ button (bottom left) lists the 13 talk slides, to jump to one. The code slides are reached by clicking a card.
 - **Presenters:** the names are in a comment on the title slide in `slides/index.html`; fill them in and remove the
   comment markers to show them.
 - **Live apps:** slides 5, 7, 8 and 10 have a **▶ Live app** button. It opens the running demo over the whole
