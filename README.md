@@ -1,14 +1,15 @@
-# Dash in 30 Minutes
+# Plotly, Dash & Other Tools
 
 Slides and demo apps for a 30-minute talk on Plotly Dash. The talk goes from a Plotly chart to an interactive app,
-and shows what happens behind the scenes.
+shows what happens behind the scenes, and compares Dash with other Python app tools.
 
 ## Contents
 
 | path | what |
 |---|---|
-| `slides/index.html` | the deck (reveal.js, 13 slides). Interactive: open it in Chrome. `S` opens the speaker notes, which include timings |
-| `slides/dash_in_30_minutes.pdf` | the same deck as a PDF, a backup that works offline (not interactive) |
+| `slides/index.html` | the deck (reveal.js, 13 slides plus an appendix of 13 component code slides). Interactive: open it in Chrome. `S` opens the speaker notes, which include timings |
+| `slides/build_details.py` | rebuilds the appendix from `demos/components/` and the cards on slides 6 and 7. Re-run it after changing either |
+| `slides/plotly_dash_and_other_tools.pdf` | the same deck as a PDF, a backup that works offline (not interactive) |
 | `slides/img/` | screenshots of the demos, taken in headless Chrome |
 | `demos/run_all.py` | starts every demo app at once, each on its own port, for the slides' **Live app** buttons |
 | `demos/data.py` | a synthetic bond universe: 60 bonds and one year of daily spreads, made in memory |
@@ -17,6 +18,7 @@ and shows what happens behind the scenes.
 | `demos/03_widgets.py` | a tour of the built-in widgets. One callback echoes every value |
 | `demos/04_callback.py` | a dropdown and a checklist drive a sentence and a chart (two Inputs, two Outputs) |
 | `demos/05_click_detail.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
+| `demos/components/` | one small runnable app per card on slides 6 and 7 (`g*` chart events, `w*` widgets); each runs on its own with `python demos/components/<name>.py` |
 | `demos/prompts.md` | the prompts for the VS Code + Copilot demo |
 | `demos/.github/copilot-instructions.md` | an example rules file that Copilot follows in `demos/` |
 
@@ -60,7 +62,12 @@ The deck loads reveal.js and plotly.js from a CDN, so it needs internet. Without
   colour each Input with its argument, then each returned value with its Output; on slide 10 they highlight the
   three pieces of the click logic.
 - **Slide 3 is a live Plotly chart:** zoom, hover and click the legend. No server is needed.
-- **Slides 6 and 7:** the cards' small animations start when each card is stepped in.
+- **Slides 6 and 7:** the cards' small animations start when each card is stepped in. **Click a card** to open its
+  code slide in the appendix: the code of a small app on the left (→ highlights the component, then the callback
+  that reads its value) and the animation on the right. **← Back** returns to the same step.
+- **Menu:** `M` or the ☰ button (bottom left) lists every slide, the code slides included, to jump to one.
+- **Presenters:** the names are in a comment on the title slide in `slides/index.html`; fill them in and remove the
+  comment markers to show them.
 - **Live apps:** slides 5, 7, 8 and 10 have a **▶ Live app** button. It opens the running demo over the whole
   slide, and you can click and type in it. **✕ Back to slide** (or moving to another slide) closes it, and the
   arrow keys work again.

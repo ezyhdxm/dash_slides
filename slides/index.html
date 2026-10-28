@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dash in 30 Minutes</title>
+<title>Plotly, Dash &amp; Other Tools</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/github.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
   :root {
     --ink: #1d2433; --muted: #5b6578; --line: #d5dbe5; --soft: #f3f5f9;
@@ -105,6 +107,32 @@
   .addons { margin-top: 12px; font-size: 16px; color: var(--muted); background: var(--soft); border-radius: 10px;
             padding: 8px 14px; }
   .addons b { color: var(--ink); }
+
+  /* cards open their code slide (appendix); the code slides themselves */
+  .fcard[data-detail] { position: relative; cursor: pointer; transition: box-shadow .2s, border-color .2s; }
+  .fcard[data-detail]:hover { border-color: var(--blue); box-shadow: 0 8px 22px rgba(47,91,211,.22); }
+  .fcard[data-detail]::after { content: "</> code"; position: absolute; top: 6px; right: 8px;
+    font: 600 11px var(--r-code-font); color: var(--blue); background: var(--blue-soft); border-radius: 99px;
+    padding: 2px 7px; opacity: 0; transition: opacity .2s; }
+  .fcard[data-detail]:hover::after { opacity: 1; }
+  .detail-cols { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 24px; }
+  .fcard.big svg { max-height: 210px; }
+  .reveal .detail pre { font-size: 15.5px; }
+  .reveal .detail pre.small-code { font-size: 13.5px; }
+  .reveal .detail pre code { max-height: 590px; }
+  .detail .run { font: 13px var(--r-code-font); color: var(--muted); margin-top: 10px; }
+  .fcard.big { padding: 14px 18px; } .fcard.big .what { font-size: 20px; margin-top: 8px; }
+  .detail .legend { font-size: 15px; color: var(--muted); margin-top: 12px; }
+  .detail .legend .k { display: inline-block; width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center;
+                       border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: .85em; }
+  .reveal .detail .hljs tr.highlight-line td { background: #fff1bf; }
+  .back-btn { position: absolute; top: 0; right: 0; font: 600 14px var(--r-main-font); background: var(--ink); color: #fff;
+              border: 0; border-radius: 99px; padding: 6px 14px; cursor: pointer; }
+  .detail-index { columns: 2; font-size: .62em; margin-top: .4em; }
+  .detail-index a { font-family: var(--r-code-font); }
+  .title-slide .authors { margin-top: 2em; font-size: .75em; }
+  .reveal .slide-menu-button { left: 10px !important; bottom: 4px !important; }  /* below the code boxes */
+  .print-pdf .back-btn, .print-pdf .fcard[data-detail]::after, .print-pdf .slide-menu-button { display: none; }
 
   /* live demo button and the full-slide overlay it opens */
   .live { position: relative; }
@@ -223,9 +251,12 @@
 <!-- ======================================================== 1. title -->
 <section class="title-slide">
   <div class="kicker">Python data apps</div>
-  <h1>Dash in 30 Minutes</h1>
-  <p class="sub">From a Plotly chart to an interactive app, and what happens behind the scenes</p>
-  <p class="small muted" style="margin-top:2.2em">Demos: <code>demos/</code> in this repo · start them all with <code>python demos/run_all.py</code></p>
+  <h1>Plotly, Dash &amp; Other Tools</h1>
+  <p class="sub">From a Plotly chart to an interactive app, what happens behind the scenes, and the other Python app tools</p>
+  <!-- Presenters. To show them on the slide, fill in the names and remove the comment markers.
+  <p class="authors">Presenter One · Presenter Two · Presenter Three</p>
+  -->
+  <!-- <p class="small muted" style="margin-top:2.2em">Demos: <code>demos/</code> in this repo · start them all with <code>python demos/run_all.py</code></p> -->
   <aside class="notes">0:00–0:30. Before the talk: run python demos/run_all.py and leave it running, so every
     "Live app" button works. The data is a synthetic bond universe (60 bonds, 12 issuers, one year of daily
     spreads), generated in demos/data.py.</aside>
@@ -399,7 +430,7 @@ dcc.Graph(
       <p class="small fragment dim">Later we'll show how to use <code>clickData</code> to update another chart when a point is clicked.</p>
     </div>
     <div class="fcards g2">
-      <div class="fcard fragment dim" data-fragment-index="0">
+      <div class="fcard fragment dim" data-detail="g1_click" data-fragment-index="0">
         <svg viewBox="0 0 240 130" aria-label="A cursor clicks a point; the point lights up">
           <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
           <circle cx="40" cy="92" r="4" fill="#2f5bd3"/><circle cx="62" cy="74" r="4" fill="#2f5bd3"/><circle cx="84" cy="96" r="4" fill="#2f5bd3"/>
@@ -412,7 +443,7 @@ dcc.Graph(
         <div class="what">Click a point: the app learns which point</div>
         <div class="name">clickData</div>
       </div>
-      <div class="fcard fragment dim" data-fragment-index="1">
+      <div class="fcard fragment dim" data-detail="g2_hover" data-fragment-index="1">
         <svg viewBox="0 0 240 130" aria-label="A cursor moves over points; a tooltip follows">
           <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
           <circle cx="40" cy="92" r="4" fill="#2f5bd3"/><circle cx="62" cy="74" r="4" fill="#2f5bd3"/><circle cx="84" cy="96" r="4" fill="#2f5bd3"/>
@@ -427,7 +458,7 @@ dcc.Graph(
         <div class="what">Hover a point: the app learns which point is under the mouse</div>
         <div class="name">hoverData</div>
       </div>
-      <div class="fcard fragment dim" data-fragment-index="2">
+      <div class="fcard fragment dim" data-detail="g3_select" data-fragment-index="2">
         <svg viewBox="0 0 240 130" aria-label="A box is dragged; points inside light up">
           <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
           <circle cx="40" cy="92" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/><circle cx="62" cy="74" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/>
@@ -441,7 +472,7 @@ dcc.Graph(
         <div class="what">Draw a box or lasso: the app learns which points are inside</div>
         <div class="name">selectedData</div>
       </div>
-      <div class="fcard fragment dim" data-fragment-index="3">
+      <div class="fcard fragment dim" data-detail="g4_relayout" data-fragment-index="3">
         <svg viewBox="0 0 240 130" aria-label="A zoom box is dragged, then the chart zooms in">
           <defs><clipPath id="clpZ"><rect x="16" y="8" width="216" height="110" rx="4"/></clipPath></defs>
           <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
@@ -460,7 +491,7 @@ dcc.Graph(
       </div>
     </div>
   </div>
-  <aside class="notes">8:00–9:30. Nothing new to learn for the charts themselves. The point of the cards: the chart
+  <aside class="notes">8:00–9:30. Click any card to open its code (appendix); "← Back" returns here. Nothing new to learn for the charts themselves. The point of the cards: the chart
     also reports what the user did, so the app can react to it.</aside>
 </section>
 
@@ -472,7 +503,7 @@ dcc.Graph(
     <button class="live-btn corner" data-port="8053">▶ Live app</button>
   </div>
   <div class="fcards g3">
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w1_dropdown">
       <svg viewBox="0 0 240 100" aria-label="A dropdown opens and Energy is picked">
         <rect x="20" y="4" width="200" height="24" rx="5" fill="#fff" stroke="#c9d1de"/>
         <text x="30" y="21" font-size="13" class="a-dd-a">Banks</text><text x="30" y="21" font-size="13" opacity="0" class="a-dd-b">Energy</text>
@@ -486,7 +517,7 @@ dcc.Graph(
       <div class="what">Pick from a list: the app gets the chosen item (or several)</div>
       <div class="name">dcc.Dropdown</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w2_checklist_radio">
       <svg viewBox="0 0 240 100" aria-label="Checklist: several boxes ticked. Radio items: exactly one choice, which moves">
         <g font-size="12">
           <text x="8" y="21" fill="#5b6578" font-weight="700">several</text>
@@ -506,7 +537,7 @@ dcc.Graph(
       <div class="what">Checklist: tick several. Radio: exactly one. The app gets what is selected</div>
       <div class="name">dcc.Checklist · dcc.RadioItems</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w3_slider">
       <svg viewBox="0 0 240 100" aria-label="A slider handle moves; a range closes in">
         <line x1="20" y1="28" x2="220" y2="28" stroke="#d5dbe5" stroke-width="5" stroke-linecap="round"/>
         <rect x="20" y="25.5" width="100" height="5" rx="2.5" fill="#2f5bd3" class="a-sl-fill"/>
@@ -519,7 +550,7 @@ dcc.Graph(
       <div class="what">Drag a handle: the app gets the number, or the range</div>
       <div class="name">dcc.Slider · dcc.RangeSlider</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w4_input">
       <svg viewBox="0 0 240 100" aria-label="Text is typed into a box">
         <defs><clipPath id="clpT"><rect x="30" y="36" width="82" height="30" class="a-type"/></clipPath></defs>
         <rect x="20" y="32" width="200" height="36" rx="6" fill="#fff" stroke="#2f5bd3" stroke-width="1.5"/>
@@ -529,7 +560,7 @@ dcc.Graph(
       <div class="what">Type text or a number: the app gets what was typed</div>
       <div class="name">dcc.Input</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w5_dates">
       <svg viewBox="0 0 240 100" aria-label="A calendar with a range of days highlighted">
         <text x="20" y="14" font-size="12" font-weight="700">Oct 2026</text>
         <g fill="#f3f5f9">
@@ -543,7 +574,7 @@ dcc.Graph(
       <div class="what">Pick a date or a range: the app gets the dates</div>
       <div class="name">dcc.DatePickerSingle · DatePickerRange</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w6_tabs">
       <svg viewBox="0 0 240 100" aria-label="The active tab switches">
         <g font-size="13" text-anchor="middle">
           <rect x="20" y="20" width="70" height="28" rx="5" fill="#f3f5f9"/><text x="55" y="39">Chart</text>
@@ -557,7 +588,7 @@ dcc.Graph(
       <div class="what">Switch tabs: the app gets which tab is open</div>
       <div class="name">dcc.Tabs</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w7_button">
       <svg viewBox="0 0 240 100" aria-label="A button is pressed three times">
         <g class="a-press"><rect x="60" y="12" width="120" height="38" rx="9" fill="#2f5bd3"/>
           <text x="120" y="36" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">Run</text></g>
@@ -569,7 +600,7 @@ dcc.Graph(
       <div class="what">Press a button: the app gets how many times it was clicked</div>
       <div class="name">html.Button</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w8_interval">
       <svg viewBox="0 0 240 100" aria-label="A clock ticks">
         <circle cx="60" cy="52" r="38" fill="#fff" stroke="#5b6578" stroke-width="2"/>
         <g stroke="#c9d1de" stroke-width="2"><line x1="60" y1="18" x2="60" y2="24"/><line x1="94" y1="52" x2="88" y2="52"/><line x1="60" y1="86" x2="60" y2="80"/><line x1="26" y1="52" x2="32" y2="52"/></g>
@@ -581,7 +612,7 @@ dcc.Graph(
       <div class="what">A timer: the app gets a tick every few seconds, for live updates</div>
       <div class="name">dcc.Interval</div>
     </div>
-    <div class="fcard fragment dim">
+    <div class="fcard fragment dim" data-detail="w9_store_files">
       <svg viewBox="0 0 240 100" aria-label="A drawer, an upload arrow and a download arrow">
         <g fill="none" stroke="#5b6578" stroke-width="2">
           <rect x="22" y="30" width="48" height="34" rx="5"/><line x1="22" y1="44" x2="70" y2="44"/><line x1="40" y1="54" x2="52" y2="54" stroke-linecap="round"/>
@@ -597,7 +628,7 @@ dcc.Graph(
   </div>
   <div class="addons fragment dim"><b>Add-on libraries:</b> <code>dash-ag-grid</code> (sortable, filterable tables) ·
     <code>dash-bootstrap-components</code> and <code>dash-mantine-components</code> (themes, layouts, more widgets)</div>
-  <aside class="notes">9:30–13:00. "Live app" (top right) opens demos/03_widgets.py: change each widget and watch
+  <aside class="notes">9:30–13:00. Click any card to open its code (appendix); "← Back" returns here. "Live app" (top right) opens demos/03_widgets.py: change each widget and watch
     "What the server received". Every widget keeps its current value, and that value is what the app reads.</aside>
 </section>
 
@@ -776,15 +807,694 @@ def show_history(click):
   <aside class="notes">27:00–30:00.</aside>
 </section>
 
+<!-- ======================================================== appendix: component code (click a card on 6 or 7) -->
+<!-- DETAILS:BEGIN (generated by build_details.py) -->
+<section class="detail" id="appendix" data-visibility="uncounted">
+  <div class="kicker">Appendix</div>
+  <h2>Component code</h2>
+  <p class="small muted">One small, runnable app per card on slides 6 and 7. Click a card in the talk to open its
+    slide; <b>← Back</b> returns to where you were.</p>
+  <ol class="detail-index">
+      <li><a href="#/d-g1_click">dcc.Graph · clickData</a></li>
+      <li><a href="#/d-g2_hover">dcc.Graph · hoverData</a></li>
+      <li><a href="#/d-g3_select">dcc.Graph · selectedData</a></li>
+      <li><a href="#/d-g4_relayout">dcc.Graph · relayoutData</a></li>
+      <li><a href="#/d-w1_dropdown">dcc.Dropdown</a></li>
+      <li><a href="#/d-w2_checklist_radio">dcc.Checklist · dcc.RadioItems</a></li>
+      <li><a href="#/d-w3_slider">dcc.Slider · dcc.RangeSlider</a></li>
+      <li><a href="#/d-w4_input">dcc.Input</a></li>
+      <li><a href="#/d-w5_dates">dcc.DatePickerSingle · DatePickerRange</a></li>
+      <li><a href="#/d-w6_tabs">dcc.Tabs</a></li>
+      <li><a href="#/d-w7_button">html.Button</a></li>
+      <li><a href="#/d-w8_interval">dcc.Interval</a></li>
+      <li><a href="#/d-w9_store_files">dcc.Store · dcc.Upload · dcc.Download</a></li>
+  </ol>
+</section>
+
+<section class="detail" id="d-g1_click" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Graph · clickData</h2>
+    <button class="back-btn" data-detail="g1_click">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+&quot;&quot;&quot;dcc.Graph clickData: click a point and the app learns which point.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+
+fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
+                 y=[80, 95, 120, 140, 165, 210, 240])  # spread
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;chart&quot;, &quot;clickData&quot;))
+def show(click):
+    if click is None:                      # nothing clicked yet
+        return &quot;Click a point&quot;
+    p = click[&quot;points&quot;][0]                 # the clicked point
+    return f&quot;maturity {p[&#x27;x&#x27;]}, spread {p[&#x27;y&#x27;]}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 130" aria-label="A cursor clicks a point; the point lights up">
+          <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
+          <circle cx="40" cy="92" r="4" fill="#2f5bd3"/><circle cx="62" cy="74" r="4" fill="#2f5bd3"/><circle cx="84" cy="96" r="4" fill="#2f5bd3"/>
+          <circle cx="104" cy="58" r="4" fill="#2f5bd3"/><circle cx="128" cy="80" r="4" fill="#2f5bd3"/><circle cx="172" cy="66" r="4" fill="#2f5bd3"/>
+          <circle cx="196" cy="34" r="4" fill="#2f5bd3"/><circle cx="214" cy="52" r="4" fill="#2f5bd3"/>
+          <circle cx="150" cy="44" r="5" fill="#c46a12" class="a-clk-dot"/>
+          <circle cx="150" cy="44" r="8" fill="none" stroke="#c46a12" stroke-width="2" opacity=".7" class="a-clk-rip"/>
+          <g transform="translate(150 44)" class="a-clk-move"><path class="cur a-clk-press" d="M0,0 L0,16 L4.5,12 L8,19 L10.5,18 L7,11 L13,11 Z"/></g>
+        </svg>
+        <div class="what">Click a point: the app learns which point</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/g1_click.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-g2_hover" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Graph · hoverData</h2>
+    <button class="back-btn" data-detail="g2_hover">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+&quot;&quot;&quot;dcc.Graph hoverData: which point is under the mouse.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+
+fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
+                 y=[80, 95, 120, 140, 165, 210, 240])  # spread
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;chart&quot;, &quot;hoverData&quot;))
+def show(hover):
+    if hover is None:                  # no point touched yet
+        return &quot;Move the mouse over a point&quot;
+    p = hover[&quot;points&quot;][0]                 # the point under the mouse
+    return f&quot;maturity {p[&#x27;x&#x27;]}, spread {p[&#x27;y&#x27;]}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 130" aria-label="A cursor moves over points; a tooltip follows">
+          <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
+          <circle cx="40" cy="92" r="4" fill="#2f5bd3"/><circle cx="62" cy="74" r="4" fill="#2f5bd3"/><circle cx="84" cy="96" r="4" fill="#2f5bd3"/>
+          <circle cx="104" cy="58" r="4" fill="#2f5bd3"/><circle cx="128" cy="80" r="4" fill="#2f5bd3"/><circle cx="150" cy="44" r="4" fill="#2f5bd3"/>
+          <circle cx="172" cy="66" r="4" fill="#2f5bd3"/><circle cx="196" cy="34" r="4" fill="#2f5bd3"/><circle cx="214" cy="52" r="4" fill="#2f5bd3"/>
+          <g transform="translate(104 58)" class="a-hov-move">
+            <g class="a-hov-tip"><rect x="-46" y="-34" width="92" height="20" rx="4" fill="#1d2433"/>
+              <text x="0" y="-20" text-anchor="middle" font-size="11" fill="#fff">issuer · 186 bp</text></g>
+            <path class="cur" d="M0,0 L0,16 L4.5,12 L8,19 L10.5,18 L7,11 L13,11 Z"/>
+          </g>
+        </svg>
+        <div class="what">Hover a point: the app learns which point is under the mouse</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/g2_hover.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-g3_select" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Graph · selectedData</h2>
+    <button class="back-btn" data-detail="g3_select">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="7,11|15-20">
+&quot;&quot;&quot;dcc.Graph selectedData: which points are inside a box or lasso.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+
+fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
+                 y=[80, 95, 120, 140, 165, 210, 240])  # spread
+fig.update_layout(dragmode=&quot;select&quot;)   # drag draws a box, not a zoom
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;chart&quot;, &quot;selectedData&quot;))
+def show(selected):
+    if not selected:                       # nothing selected yet
+        return &quot;Drag a box around some points&quot;
+    xs = [p[&quot;x&quot;] for p in selected[&quot;points&quot;]]   # every point inside
+    return f&quot;{len(xs)} points, maturities {xs}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 130" aria-label="A box is dragged; points inside light up">
+          <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
+          <circle cx="40" cy="92" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/><circle cx="62" cy="74" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/>
+          <circle cx="84" cy="96" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/><circle cx="196" cy="34" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/>
+          <circle cx="214" cy="52" r="4" fill="#2f5bd3" opacity=".22" class="a-sel-out"/>
+          <circle cx="104" cy="58" r="4" fill="#c46a12" class="a-sel-in"/><circle cx="128" cy="80" r="4" fill="#c46a12" class="a-sel-in"/>
+          <circle cx="150" cy="44" r="4" fill="#c46a12" class="a-sel-in"/><circle cx="172" cy="66" r="4" fill="#c46a12" class="a-sel-in"/>
+          <rect x="92" y="32" width="92" height="56" fill="rgba(47,91,211,.12)" stroke="#2f5bd3" stroke-dasharray="4 3" class="a-sel-box"/>
+          <g transform="translate(184 88)" class="a-sel-cur"><path class="cur" d="M0,0 L0,16 L4.5,12 L8,19 L10.5,18 L7,11 L13,11 Z"/></g>
+        </svg>
+        <div class="what">Draw a box or lasso: the app learns which points are inside</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/g3_select.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-g4_relayout" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Graph · relayoutData</h2>
+    <button class="back-btn" data-detail="g4_relayout">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+&quot;&quot;&quot;dcc.Graph relayoutData: the visible range after a zoom or pan.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+
+fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
+                 y=[80, 95, 120, 140, 165, 210, 240])  # spread
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;chart&quot;, &quot;relayoutData&quot;))
+def show(layout):
+    if not layout or &quot;xaxis.range[0]&quot; not in layout:  # no zoom yet
+        return &quot;Drag a box to zoom in&quot;
+    lo, hi = layout[&quot;xaxis.range[0]&quot;], layout[&quot;xaxis.range[1]&quot;]
+    return f&quot;showing maturities {lo:.1f} to {hi:.1f}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 130" aria-label="A zoom box is dragged, then the chart zooms in">
+          <defs><clipPath id="clpZ-d"><rect x="16" y="8" width="216" height="110" rx="4"/></clipPath></defs>
+          <rect x="16" y="8" width="216" height="110" rx="4" fill="#f3f5f9"/>
+          <g clip-path="url(#clpZ-d)"><g transform="translate(-179.6 -72) scale(2.2)" class="a-zm-dots">
+            <circle cx="40" cy="92" r="4" fill="#2f5bd3"/><circle cx="62" cy="74" r="4" fill="#2f5bd3"/><circle cx="84" cy="96" r="4" fill="#2f5bd3"/>
+            <circle cx="104" cy="58" r="4" fill="#2f5bd3"/><circle cx="128" cy="80" r="4" fill="#2f5bd3"/><circle cx="150" cy="44" r="4" fill="#2f5bd3"/>
+            <circle cx="172" cy="66" r="4" fill="#2f5bd3"/><circle cx="196" cy="34" r="4" fill="#2f5bd3"/><circle cx="214" cy="52" r="4" fill="#2f5bd3"/>
+          </g></g>
+          <g font-size="10" fill="#5b6578"><g opacity="0" class="a-zm-t0"><text x="22" y="128">0</text><text x="88" y="128">10</text><text x="156" y="128">20</text><text x="218" y="128">30</text></g>
+            <g class="a-zm-t1"><text x="22" y="128">10</text><text x="118" y="128">15</text><text x="214" y="128">20</text></g></g>
+          <rect x="96" y="36" width="84" height="48" fill="rgba(29,36,51,.06)" stroke="#5b6578" stroke-dasharray="4 3" opacity="0" class="a-zm-box"/>
+          <g transform="translate(180 84)" opacity="0" class="a-zm-cur"><path class="cur" d="M0,0 L0,16 L4.5,12 L8,19 L10.5,18 L7,11 L13,11 Z"/></g>
+        </svg>
+        <div class="what">Zoom or pan: the app learns the new visible range</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/g4_relayout.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w1_dropdown" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Dropdown</h2>
+    <button class="back-btn" data-detail="w1_dropdown">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-11|15-17">
+&quot;&quot;&quot;dcc.Dropdown: pick from a list; the app gets the chosen item.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Dropdown(
+        id=&quot;sector&quot;,
+        options=[&quot;Banks&quot;, &quot;Energy&quot;, &quot;Tech&quot;],
+        value=&quot;Banks&quot;,                     # chosen at the start
+        # multi=True,          # pick several: value becomes a list
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;sector&quot;, &quot;value&quot;))
+def show(sector):
+    return f&quot;sector = {sector!r}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A dropdown opens and Energy is picked">
+        <rect x="20" y="4" width="200" height="24" rx="5" fill="#fff" stroke="#c9d1de"/>
+        <text x="30" y="21" font-size="13" class="a-dd-a">Banks</text><text x="30" y="21" font-size="13" opacity="0" class="a-dd-b">Energy</text>
+        <text x="204" y="21" font-size="12" fill="#5b6578">▾</text>
+        <g class="a-dd-panel">
+          <rect x="20" y="31" width="200" height="64" rx="5" fill="#fff" stroke="#c9d1de"/>
+          <rect x="21" y="34" width="198" height="18" fill="#e6edfd" transform="translate(0 20)" class="a-dd-hi"/>
+          <text x="30" y="47" font-size="12">Banks</text><text x="30" y="67" font-size="12">Energy</text><text x="30" y="87" font-size="12">Tech</text>
+        </g>
+      </svg>
+        <div class="what">Pick from a list: the app gets the chosen item (or several)</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w1_dropdown.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w2_checklist_radio" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Checklist · dcc.RadioItems</h2>
+    <button class="back-btn" data-detail="w2_checklist_radio">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-15|19-22">
+&quot;&quot;&quot;dcc.Checklist (tick several) and dcc.RadioItems (exactly one).&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Checklist(
+        id=&quot;ratings&quot;,
+        options=[&quot;AA&quot;, &quot;A&quot;, &quot;BBB&quot;],
+        value=[&quot;A&quot;, &quot;BBB&quot;],    # a list: several can be ticked
+    ),
+    dcc.RadioItems(
+        id=&quot;measure&quot;,
+        options=[&quot;spread&quot;, &quot;coupon&quot;],
+        value=&quot;spread&quot;,        # one value: exactly one is chosen
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;),
+              Input(&quot;ratings&quot;, &quot;value&quot;), Input(&quot;measure&quot;, &quot;value&quot;))
+def show(ratings, measure):
+    return f&quot;ratings = {ratings}\nmeasure = {measure!r}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="Checklist: several boxes ticked. Radio items: exactly one choice, which moves">
+        <g font-size="12">
+          <text x="8" y="21" fill="#5b6578" font-weight="700">several</text>
+          <rect x="64" y="10" width="14" height="14" rx="3" fill="#fff" stroke="#5b6578"/><text x="83" y="22">AA</text>
+          <rect x="118" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="137" y="22">A</text>
+          <rect x="166" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><text x="185" y="22">BBB</text>
+          <path d="M121,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
+          <path d="M169,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/>
+          <g opacity="0" class="a-tick1"><rect x="64" y="10" width="14" height="14" rx="3" fill="#2f5bd3"/><path d="M67,17 l3,3 l6,-7" stroke="#fff" stroke-width="2" fill="none"/></g>
+          <line x1="8" y1="44" x2="232" y2="44" stroke="#e1e6ee"/>
+          <text x="8" y="73" fill="#5b6578" font-weight="700">only one</text>
+          <circle cx="71" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="83" y="73">spread</text>
+          <circle cx="141" cy="68" r="7" fill="#fff" stroke="#5b6578"/><text x="153" y="73">coupon</text>
+          <circle cx="71" cy="68" r="3.5" fill="#2f5bd3" class="a-radio"/>
+        </g>
+      </svg>
+        <div class="what">Checklist: tick several. Radio: exactly one. The app gets what is selected</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w2_checklist_radio.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w3_slider" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Slider · dcc.RangeSlider</h2>
+    <button class="back-btn" data-detail="w3_slider">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-15|19-22">
+&quot;&quot;&quot;dcc.Slider (one number) and dcc.RangeSlider (a low and a high).&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Slider(
+        id=&quot;max_spread&quot;,
+        min=0, max=400, step=10,
+        value=200,                         # one number
+    ),
+    dcc.RangeSlider(
+        id=&quot;maturity&quot;,
+        min=0, max=30, step=1,
+        value=[2, 10],                     # [low, high]
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;),
+              Input(&quot;max_spread&quot;, &quot;value&quot;), Input(&quot;maturity&quot;, &quot;value&quot;))
+def show(max_spread, maturity):
+    return f&quot;max spread = {max_spread}\nmaturity = {maturity}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A slider handle moves; a range closes in">
+        <line x1="20" y1="28" x2="220" y2="28" stroke="#d5dbe5" stroke-width="5" stroke-linecap="round"/>
+        <rect x="20" y="25.5" width="100" height="5" rx="2.5" fill="#2f5bd3" class="a-sl-fill"/>
+        <g class="a-sl-thumb"><circle cx="120" cy="28" r="8" fill="#fff" stroke="#2f5bd3" stroke-width="3"/></g>
+        <line x1="20" y1="74" x2="220" y2="74" stroke="#d5dbe5" stroke-width="5" stroke-linecap="round"/>
+        <rect x="80" y="71.5" width="80" height="5" fill="#2f5bd3" class="a-rg-fill"/>
+        <g class="a-rg-l"><circle cx="80" cy="74" r="8" fill="#fff" stroke="#2f5bd3" stroke-width="3"/></g>
+        <g class="a-rg-r"><circle cx="160" cy="74" r="8" fill="#fff" stroke="#2f5bd3" stroke-width="3"/></g>
+      </svg>
+        <div class="what">Drag a handle: the app gets the number, or the range</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w3_slider.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w4_input" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Input</h2>
+    <button class="back-btn" data-detail="w4_input">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-11|15-17">
+&quot;&quot;&quot;dcc.Input: type text or a number; the app gets what was typed.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Input(
+        id=&quot;issuer&quot;,
+        type=&quot;text&quot;,           # or &quot;number&quot;
+        placeholder=&quot;issuer name&quot;,
+        debounce=True,         # send on Enter, not on every key
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;issuer&quot;, &quot;value&quot;))
+def show(issuer):
+    return f&quot;issuer = {issuer!r}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="Text is typed into a box">
+        <defs><clipPath id="clpT-d"><rect x="30" y="36" width="82" height="30" class="a-type"/></clipPath></defs>
+        <rect x="20" y="32" width="200" height="36" rx="6" fill="#fff" stroke="#2f5bd3" stroke-width="1.5"/>
+        <text x="30" y="56" font-size="15" font-family="Menlo, Consolas, monospace" clip-path="url(#clpT-d)">Northbank</text>
+        <g transform="translate(81 0)" class="a-caret"><line x1="31" y1="40" x2="31" y2="60" stroke="#1d2433" stroke-width="1.5" class="a-blink"/></g>
+      </svg>
+        <div class="what">Type text or a number: the app gets what was typed</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w4_input.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w5_dates" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.DatePickerSingle · DatePickerRange</h2>
+    <button class="back-btn" data-detail="w5_dates">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-14|18-21">
+&quot;&quot;&quot;dcc.DatePickerSingle (one date) and dcc.DatePickerRange (two).&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.DatePickerSingle(
+        id=&quot;asof&quot;,
+        date=&quot;2026-10-27&quot;,
+    ),
+    dcc.DatePickerRange(
+        id=&quot;window&quot;,
+        start_date=&quot;2026-10-05&quot;,
+        end_date=&quot;2026-10-16&quot;,
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;asof&quot;, &quot;date&quot;),
+              Input(&quot;window&quot;, &quot;start_date&quot;), Input(&quot;window&quot;, &quot;end_date&quot;))
+def show(asof, start, end):
+    return f&quot;as of {asof}\nwindow {start} to {end}&quot;  # dates are text
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A calendar with a range of days highlighted">
+        <text x="20" y="14" font-size="12" font-weight="700">Oct 2026</text>
+        <g fill="#f3f5f9">
+          <rect x="20" y="22" width="26" height="15" rx="3"/><rect x="50" y="22" width="26" height="15" rx="3"/><rect x="80" y="22" width="26" height="15" rx="3"/><rect x="110" y="22" width="26" height="15" rx="3"/><rect x="140" y="22" width="26" height="15" rx="3"/><rect x="170" y="22" width="26" height="15" rx="3"/><rect x="200" y="22" width="26" height="15" rx="3"/>
+          <rect x="20" y="41" width="26" height="15" rx="3"/><rect x="50" y="41" width="26" height="15" rx="3"/><rect x="80" y="41" width="26" height="15" rx="3"/><rect x="110" y="41" width="26" height="15" rx="3"/><rect x="140" y="41" width="26" height="15" rx="3"/><rect x="170" y="41" width="26" height="15" rx="3"/><rect x="200" y="41" width="26" height="15" rx="3"/>
+          <rect x="20" y="60" width="26" height="15" rx="3"/><rect x="50" y="60" width="26" height="15" rx="3"/><rect x="80" y="60" width="26" height="15" rx="3"/><rect x="110" y="60" width="26" height="15" rx="3"/><rect x="140" y="60" width="26" height="15" rx="3"/><rect x="170" y="60" width="26" height="15" rx="3"/><rect x="200" y="60" width="26" height="15" rx="3"/>
+          <rect x="20" y="79" width="26" height="15" rx="3"/><rect x="50" y="79" width="26" height="15" rx="3"/><rect x="80" y="79" width="26" height="15" rx="3"/><rect x="110" y="79" width="26" height="15" rx="3"/><rect x="140" y="79" width="26" height="15" rx="3"/><rect x="170" y="79" width="26" height="15" rx="3"/><rect x="200" y="79" width="26" height="15" rx="3"/>
+        </g>
+        <rect x="50" y="60" width="116" height="15" rx="3" fill="#2f5bd3" opacity=".85" class="a-date"/>
+      </svg>
+        <div class="what">Pick a date or a range: the app gets the dates</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w5_dates.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w6_tabs" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Tabs</h2>
+    <button class="back-btn" data-detail="w6_tabs">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6-10|14-16">
+&quot;&quot;&quot;dcc.Tabs: the app gets which tab is open.&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Tabs(id=&quot;view&quot;, value=&quot;chart&quot;, children=[
+        dcc.Tab(label=&quot;Chart&quot;, value=&quot;chart&quot;),
+        dcc.Tab(label=&quot;Table&quot;, value=&quot;table&quot;),
+        dcc.Tab(label=&quot;Notes&quot;, value=&quot;notes&quot;),
+    ]),
+    html.Div(id=&quot;page&quot;),
+])
+
+@app.callback(Output(&quot;page&quot;, &quot;children&quot;), Input(&quot;view&quot;, &quot;value&quot;))
+def show(tab):
+    return html.P(f&quot;Showing the {tab} tab&quot;)  # what the tab shows
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="The active tab switches">
+        <g font-size="13" text-anchor="middle">
+          <rect x="20" y="20" width="70" height="28" rx="5" fill="#f3f5f9"/><text x="55" y="39">Chart</text>
+          <rect x="93" y="20" width="70" height="28" rx="5" fill="#f3f5f9"/><text x="128" y="39">Table</text>
+          <rect x="166" y="20" width="70" height="28" rx="5" fill="#f3f5f9"/><text x="201" y="39">Notes</text>
+        </g>
+        <rect x="20" y="48" width="70" height="3" fill="#2f5bd3" transform="translate(73 0)" class="a-tab"/>
+        <rect x="20" y="58" width="216" height="34" rx="5" fill="#fff" stroke="#e1e6ee"/>
+        <line x1="32" y1="70" x2="200" y2="70" stroke="#e1e6ee" stroke-width="5"/><line x1="32" y1="82" x2="150" y2="82" stroke="#e1e6ee" stroke-width="5"/>
+      </svg>
+        <div class="what">Switch tabs: the app gets which tab is open</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w6_tabs.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w7_button" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>html.Button</h2>
+    <button class="back-btn" data-detail="w7_button">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="6|10-14">
+&quot;&quot;&quot;html.Button: the app gets how many times it was clicked.&quot;&quot;&quot;
+from dash import Dash, html, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    html.Button(&quot;Run&quot;, id=&quot;run&quot;),          # n_clicks counts the clicks
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;run&quot;, &quot;n_clicks&quot;))
+def show(n):
+    if n is None:                          # not clicked yet
+        return &quot;Press Run&quot;
+    return f&quot;clicked {n} time{&#x27;s&#x27; if n &gt; 1 else &#x27;&#x27;}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A button is pressed three times">
+        <g class="a-press"><rect x="60" y="12" width="120" height="38" rx="9" fill="#2f5bd3"/>
+          <text x="120" y="36" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">Run</text></g>
+        <g font-size="13" fill="#5b6578" text-anchor="middle">
+          <text x="120" y="80" opacity="0" class="a-n1">clicked 1 time</text>
+          <text x="120" y="80" opacity="0" class="a-n2">clicked 2 times</text>
+          <text x="120" y="80" class="a-n3">clicked 3 times</text></g>
+      </svg>
+        <div class="what">Press a button: the app gets how many times it was clicked</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w7_button.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w8_interval" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Interval</h2>
+    <button class="back-btn" data-detail="w8_interval">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class=""><code class="language-python" data-trim data-line-numbers="7-10|14-17">
+&quot;&quot;&quot;dcc.Interval: a timer; the app gets a tick every few seconds.&quot;&quot;&quot;
+from datetime import datetime
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Interval(
+        id=&quot;timer&quot;,
+        interval=2000,                     # milliseconds between ticks
+    ),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;timer&quot;, &quot;n_intervals&quot;))
+def refresh(n):
+    # re-read live data here, e.g. the latest prices
+    return f&quot;tick {n} at {datetime.now():%H:%M:%S}&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A clock ticks">
+        <circle cx="60" cy="52" r="38" fill="#fff" stroke="#5b6578" stroke-width="2"/>
+        <g stroke="#c9d1de" stroke-width="2"><line x1="60" y1="18" x2="60" y2="24"/><line x1="94" y1="52" x2="88" y2="52"/><line x1="60" y1="86" x2="60" y2="80"/><line x1="26" y1="52" x2="32" y2="52"/></g>
+        <line x1="60" y1="52" x2="60" y2="24" stroke="#2f5bd3" stroke-width="3" stroke-linecap="round" transform="rotate(60)" class="a-hand"/>
+        <circle cx="60" cy="52" r="3.5" fill="#1d2433"/>
+        <text x="120" y="48" font-size="14" font-weight="700" fill="#2f5bd3" class="a-pulse">tick</text>
+        <text x="120" y="68" font-size="12" fill="#5b6578">every few seconds</text>
+      </svg>
+        <div class="what">A timer: the app gets a tick every few seconds, for live updates</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w8_interval.py</div>
+    </div>
+  </div>
+</section>
+
+<section class="detail" id="d-w9_store_files" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Store · dcc.Upload · dcc.Download</h2>
+    <button class="back-btn" data-detail="w9_store_files">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="6-7,9|13-14,18,22-23">
+&quot;&quot;&quot;dcc.Store (keep data), dcc.Upload (in), dcc.Download (out).&quot;&quot;&quot;
+from dash import Dash, html, dcc, Input, Output
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Upload(html.Button(&quot;Upload a file&quot;), id=&quot;up&quot;),
+    dcc.Store(id=&quot;kept&quot;),              # keeps data in the browser
+    html.Button(&quot;Download CSV&quot;, id=&quot;btn&quot;),
+    dcc.Download(id=&quot;down&quot;),
+    html.Pre(id=&quot;out&quot;),
+])
+
+@app.callback(Output(&quot;kept&quot;, &quot;data&quot;), Input(&quot;up&quot;, &quot;filename&quot;),
+              prevent_initial_call=True)
+def keep(filename):
+    return {&quot;last upload&quot;: filename}
+
+@app.callback(Output(&quot;out&quot;, &quot;children&quot;), Input(&quot;kept&quot;, &quot;data&quot;))
+def show(kept):
+    return f&quot;stored: {kept}&quot;
+
+@app.callback(Output(&quot;down&quot;, &quot;data&quot;), Input(&quot;btn&quot;, &quot;n_clicks&quot;),
+              prevent_initial_call=True)
+def download(n):
+    return dcc.send_string(&quot;cusip,spread\nNOR05123,142\n&quot;, &quot;bonds.csv&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="fcard big"><svg viewBox="0 0 240 100" aria-label="A drawer, an upload arrow and a download arrow">
+        <g fill="none" stroke="#5b6578" stroke-width="2">
+          <rect x="22" y="30" width="48" height="34" rx="5"/><line x1="22" y1="44" x2="70" y2="44"/><line x1="40" y1="54" x2="52" y2="54" stroke-linecap="round"/>
+          <path d="M100,62 v8 h40 v-8"/><path d="M170,62 v8 h40 v-8"/>
+        </g>
+        <g class="a-bob-up"><path d="M120,58 v-30 m-9,9 l9,-9 l9,9" fill="none" stroke="#2f5bd3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+        <g class="a-bob-dn"><path d="M190,26 v30 m-9,-9 l9,9 l9,-9" fill="none" stroke="#1f8a5b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+        <g font-size="12" fill="#5b6578" text-anchor="middle"><text x="46" y="88">keep</text><text x="120" y="88">upload</text><text x="190" y="88">download</text></g>
+      </svg>
+        <div class="what">Keep data between steps; let files in and out</div></div>
+      <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
+        <br>(→ moves from 1 to 2)</p>
+      <div class="run">Try it: python demos/components/w9_store_files.py</div>
+    </div>
+  </div>
+</section>
+<!-- DETAILS:END -->
+
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.1.0/plotly.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.js"></script>
 <script>
   Reveal.initialize({
     width: 1280, height: 720, margin: 0.05, hash: true, slideNumber: "c/t",
-    transition: "none", pdfSeparateFragments: false, plugins: [RevealHighlight, RevealNotes],
+    transition: "none", pdfSeparateFragments: false, plugins: [RevealHighlight, RevealNotes, RevealMenu],
+    // M or the ☰ button (bottom left) lists every slide, code slides included
+    menu: { side: "left", titleSelector: "h1, h2", themes: false, transitions: false, loadIcons: false,
+            markers: true, openOnInit: false },
   });
 
   // Slide 3: draw the live Plotly chart once its slide is shown (it needs a visible box to size itself).
@@ -817,6 +1527,26 @@ def show_history(click):
     document.querySelector(".reveal .slides").appendChild(ov);
   }));
   Reveal.on("slidechanged", closeLive);
+  // Cards on slides 6 and 7 open their code slide in the appendix. "← Back" returns to the same step;
+  // when a code slide was reached another way, it returns to the card's slide with every step shown.
+  let cameFrom = null;
+  document.querySelectorAll(".fcard[data-detail]").forEach(card => card.addEventListener("click", () => {
+    cameFrom = Reveal.getIndices();
+    const t = Reveal.getIndices(document.getElementById("d-" + card.dataset.detail));
+    Reveal.slide(t.h, t.v);
+  }));
+  document.querySelectorAll(".back-btn").forEach(btn => btn.addEventListener("click", () => {
+    if (cameFrom) {
+      Reveal.slide(cameFrom.h, cameFrom.v, cameFrom.f);
+    } else {
+      const home = document.querySelector(`.fcard[data-detail="${btn.dataset.detail}"]`).closest("section");
+      const t = Reveal.getIndices(home);
+      Reveal.slide(t.h, t.v);
+      while (Reveal.nextFragment()) {}
+    }
+    cameFrom = null;
+    window.focus();
+  }));
 </script>
 </body>
 </html>
