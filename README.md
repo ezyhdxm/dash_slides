@@ -7,7 +7,7 @@ shows what happens behind the scenes, and compares Dash with other Python app to
 
 | path | what |
 |---|---|
-| `slides/index.html` | the deck (reveal.js, 13 slides plus an appendix of 13 component code slides). Interactive: open it in Chrome. `S` opens the speaker notes, which include timings |
+| `slides/index.html` | the deck (reveal.js, 13 slides plus an appendix of 14 component code slides). Interactive: open it in Chrome. `S` opens the speaker notes, which include timings |
 | `slides/build_details.py` | rebuilds the appendix from `demos/components/` and the cards on slides 6 and 7. Re-run it after changing either |
 | `slides/plotly_dash_and_other_tools.pdf` | the same deck as a PDF, a backup that works offline (not interactive) |
 | `slides/img/` | screenshots of the demos, taken in headless Chrome |
@@ -19,6 +19,7 @@ shows what happens behind the scenes, and compares Dash with other Python app to
 | `demos/04_callback.py` | a dropdown and a checklist drive a sentence and a chart (two Inputs, two Outputs) |
 | `demos/05_click_detail.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
 | `demos/components/` | one small runnable app per card on slides 6 and 7 (`g*` chart events, `w*` widgets); each runs on its own with `python demos/components/<name>.py` |
+| `demos/components/w8b_ticks.py` | live tick data: `dcc.Interval` polls a tick database every second and appends only the new ticks (`extendData`). `tickdb.py` stands in for the database (an in-memory SQLite table fed by a background thread); swap `ticks_since` for your own query |
 | `demos/prompts.md` | the prompts for the VS Code + Copilot demo |
 | `demos/.github/copilot-instructions.md` | an example rules file that Copilot follows in `demos/` |
 

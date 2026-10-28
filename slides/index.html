@@ -130,6 +130,12 @@
               border: 0; border-radius: 99px; padding: 6px 14px; cursor: pointer; }
   .detail-index { columns: 2; font-size: .62em; margin-top: .4em; }
   .detail-index a { font-family: var(--r-code-font); }
+  .detail .explain { font-size: 17px; line-height: 1.4; }
+  .detail .explain p { margin: 0 0 .5em; } .detail .explain ol { margin: 0 0 .7em 1.2em; }
+  .detail .explain li { margin: .3em 0; }
+  .detail .explain .limit { background: var(--orange-soft); border-left: 5px solid var(--orange); border-radius: 6px;
+                            padding: 8px 12px; }
+  .detail .next-link { font-size: 17px; margin-top: 14px; }
   .title-slide .authors { margin-top: 2em; font-size: .75em; }
   .reveal .slide-menu-button { left: 10px !important; bottom: 4px !important; }  /* below the code boxes */
   .print-pdf .back-btn, .print-pdf .fcard[data-detail]::after, .print-pdf .slide-menu-button { display: none; }
@@ -812,8 +818,8 @@ def show_history(click):
 <section class="detail" id="appendix" data-visibility="uncounted">
   <div class="kicker">Appendix</div>
   <h2>Component code</h2>
-  <p class="small muted">One small, runnable app per card on slides 6 and 7. Click a card in the talk to open its
-    slide; <b>← Back</b> returns to where you were.</p>
+  <p class="small muted">One small, runnable app per card on slides 6 and 7, plus live tick data with
+    <code>dcc.Interval</code>. Click a card in the talk to open its slide; <b>← Back</b> returns to where you were.</p>
   <ol class="detail-index">
       <li><a href="#/d-g1_click">dcc.Graph · clickData</a></li>
       <li><a href="#/d-g2_hover">dcc.Graph · hoverData</a></li>
@@ -827,6 +833,7 @@ def show_history(click):
       <li><a href="#/d-w6_tabs">dcc.Tabs</a></li>
       <li><a href="#/d-w7_button">html.Button</a></li>
       <li><a href="#/d-w8_interval">dcc.Interval</a></li>
+      <li><a href="#/d-w8b_ticks">dcc.Interval · live tick data</a></li>
       <li><a href="#/d-w9_store_files">dcc.Store · dcc.Upload · dcc.Download</a></li>
   </ol>
 </section>
@@ -837,7 +844,7 @@ def show_history(click):
     <button class="back-btn" data-detail="g1_click">← Back</button></div>
   <div class="cols detail-cols">
     <div>
-<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="10-14|18-23">
 &quot;&quot;&quot;dcc.Graph clickData: click a point and the app learns which point.&quot;&quot;&quot;
 from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
@@ -847,7 +854,11 @@ fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    dcc.Graph(
+        id=&quot;chart&quot;,
+        figure=fig,
+        clickData=None,           # filled in when a point is clicked
+    ),
     html.Pre(id=&quot;out&quot;),
 ])
 
@@ -886,7 +897,7 @@ if __name__ == &quot;__main__&quot;:
     <button class="back-btn" data-detail="g2_hover">← Back</button></div>
   <div class="cols detail-cols">
     <div>
-<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="10-14|18-23">
 &quot;&quot;&quot;dcc.Graph hoverData: which point is under the mouse.&quot;&quot;&quot;
 from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
@@ -896,7 +907,11 @@ fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    dcc.Graph(
+        id=&quot;chart&quot;,
+        figure=fig,
+        hoverData=None,           # filled in when hovering a point
+    ),
     html.Pre(id=&quot;out&quot;),
 ])
 
@@ -937,7 +952,7 @@ if __name__ == &quot;__main__&quot;:
     <button class="back-btn" data-detail="g3_select">← Back</button></div>
   <div class="cols detail-cols">
     <div>
-<pre class=""><code class="language-python" data-trim data-line-numbers="7,11|15-20">
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="7,11-15|19-24">
 &quot;&quot;&quot;dcc.Graph selectedData: which points are inside a box or lasso.&quot;&quot;&quot;
 from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
@@ -948,7 +963,11 @@ fig.update_layout(dragmode=&quot;select&quot;)   # drag draws a box, not a zoom
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    dcc.Graph(
+        id=&quot;chart&quot;,
+        figure=fig,
+        selectedData=None,        # filled in when a box is drawn
+    ),
     html.Pre(id=&quot;out&quot;),
 ])
 
@@ -988,7 +1007,7 @@ if __name__ == &quot;__main__&quot;:
     <button class="back-btn" data-detail="g4_relayout">← Back</button></div>
   <div class="cols detail-cols">
     <div>
-<pre class=""><code class="language-python" data-trim data-line-numbers="10|14-19">
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="10-14|18-23">
 &quot;&quot;&quot;dcc.Graph relayoutData: the visible range after a zoom or pan.&quot;&quot;&quot;
 from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
@@ -998,7 +1017,11 @@ fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id=&quot;chart&quot;, figure=fig),
+    dcc.Graph(
+        id=&quot;chart&quot;,
+        figure=fig,
+        relayoutData=None,        # filled in on every zoom or pan
+    ),
     html.Pre(id=&quot;out&quot;),
 ])
 
@@ -1422,6 +1445,62 @@ if __name__ == &quot;__main__&quot;:
       <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
         <br>(→ moves from 1 to 2)</p>
       <div class="run">Try it: python demos/components/w8_interval.py</div>
+      <p class="next-link"><a href="#/d-w8b_ticks">Next: live tick data from a database →</a></p>
+    </div>
+  </div>
+</section>
+<section class="detail" id="d-w8b_ticks" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>dcc.Interval · live tick data</h2>
+    <button class="back-btn" data-detail="w8_interval">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class="small-code"><code class="language-python" data-trim data-line-numbers="11-12|15-16,18|23-24">
+&quot;&quot;&quot;dcc.Interval + a tick database: fetch the new ticks, append them.&quot;&quot;&quot;
+from datetime import datetime
+from dash import Dash, html, dcc, Input, Output, State, no_update
+import plotly.graph_objects as go
+from tickdb import ticks_since         # swap in your own DB query
+
+app = Dash(__name__)
+app.layout = html.Div([
+    dcc.Graph(id=&quot;chart&quot;,
+              figure=go.Figure(go.Scatter(x=[], y=[], mode=&quot;lines&quot;))),
+    dcc.Interval(id=&quot;timer&quot;, interval=1000),   # ask every second
+    dcc.Store(id=&quot;last_ts&quot;, data=0),           # newest tick on screen
+])
+
+@app.callback(Output(&quot;chart&quot;, &quot;extendData&quot;), Output(&quot;last_ts&quot;, &quot;data&quot;),
+              Input(&quot;timer&quot;, &quot;n_intervals&quot;), State(&quot;last_ts&quot;, &quot;data&quot;))
+def add_ticks(n, last_ts):
+    rows = ticks_since(last_ts)            # only the ticks not yet shown
+    if not rows:
+        return no_update, no_update
+    ts, price = zip(*rows)
+    x = [datetime.fromtimestamp(t) for t in ts]
+    new = dict(x=[x], y=[list(price)])     # one list per trace
+    return (new, [0], 2000), ts[-1]        # trace 0, keep last 2000
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+    </div>
+    <div>
+      <div class="explain">
+        <p><b>Can it show live tick data?</b> Yes, by asking on a timer:</p>
+        <ol>
+          <li>Every second, <code>dcc.Interval</code> runs the callback.</li>
+          <li>It asks the database only for ticks newer than the last one on screen. <code>dcc.Store</code>
+            remembers that time.</li>
+          <li><code>extendData</code> adds the new points to the chart instead of redrawing it, and keeps the
+            last 2,000.</li>
+        </ol>
+        <p class="limit"><b>The limit:</b> the browser asks; the server cannot push. Each open page sends one request
+          a second, so the chart can be up to a second behind. Fine for prices on a desk. For every tick, faster
+          updates or many viewers: let the database return 1-second bars or the last price, or push over a
+          WebSocket (<code>dash-extensions</code>).</p>
+      </div>
+      <div class="run">Try it: python demos/components/w8b_ticks.py</div>
     </div>
   </div>
 </section>

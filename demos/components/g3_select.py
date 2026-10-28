@@ -8,7 +8,11 @@ fig.update_layout(dragmode="select")   # drag draws a box, not a zoom
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id="chart", figure=fig),
+    dcc.Graph(
+        id="chart",
+        figure=fig,
+        selectedData=None,        # filled in when a box is drawn
+    ),
     html.Pre(id="out"),
 ])
 

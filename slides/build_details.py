@@ -26,6 +26,28 @@ CALLS = {
     "w9_store_files": ["dcc.Upload(", "dcc.Store(", "dcc.Download("],
 }
 
+# follow-up slides that come right after a card's slide: script -> (title, steps as lists of call starts, notes)
+FOLLOW = {
+    "w8_interval": ("w8b_ticks", "dcc.Interval · live tick data", [
+        ["dcc.Interval(", "dcc.Store("],
+        ["@app.callback(", "rows = ticks_since("],
+        ["new = dict(", "return (new,"],
+    ], """<div class="explain">
+        <p><b>Can it show live tick data?</b> Yes, by asking on a timer:</p>
+        <ol>
+          <li>Every second, <code>dcc.Interval</code> runs the callback.</li>
+          <li>It asks the database only for ticks newer than the last one on screen. <code>dcc.Store</code>
+            remembers that time.</li>
+          <li><code>extendData</code> adds the new points to the chart instead of redrawing it, and keeps the
+            last 2,000.</li>
+        </ol>
+        <p class="limit"><b>The limit:</b> the browser asks; the server cannot push. Each open page sends one request
+          a second, so the chart can be up to a second behind. Fine for prices on a desk. For every tick, faster
+          updates or many viewers: let the database return 1-second bars or the last price, or push over a
+          WebSocket (<code>dash-extensions</code>).</p>
+      </div>"""),
+}
+
 
 def block(lines, start):
     """Line numbers (1-based) from `start` to where its brackets close."""
@@ -62,6 +84,17 @@ def steps(name, lines):
     return f"{ranges(comp)}|{ranges(reads)}"
 
 
+def marked(lines, groups):
+    """data-line-numbers for steps given as lists of call starts."""
+    out = []
+    for group in groups:
+        nums = []
+        for call in group:
+            nums += block(lines, next(i for i, l in enumerate(lines) if l.lstrip().startswith(call)))
+        out.append(ranges(nums))
+    return "|".join(out)
+
+
 def card(page, name):
     m = re.search(rf'class="fcard[^"]*" data-detail="{name}"[^>]*>(.*?)<div class="what">(.*?)</div>\s*<div class="name">(.*?)</div>', page, re.S)
     svg = re.sub(r'id="(clp\w+)"', r'id="\1-d"', m.group(1).strip())
@@ -94,7 +127,40 @@ def slide(page, name):
         <div class="what">{what}</div></div>
       <p class="legend"><span class="k">1</span> the component &nbsp; <span class="k">2</span> the callback that reads its value
         <br>(→ moves from 1 to 2)</p>
-      <div class="run">Try it: python demos/components/{name}.py</div>
+      <div class="run">Try it: python demos/components/{name}.py</div>{follow_link(name)}
+    </div>
+  </div>
+</section>
+""" + follow_slide(name)
+
+
+def follow_link(name):
+    if name not in FOLLOW:
+        return ""
+    other, title, _, _ = FOLLOW[name]
+    return f'\n      <p class="next-link"><a href="#/d-{other}">Next: {title.split(" · ")[1]} from a database →</a></p>'
+
+
+def follow_slide(name):
+    if name not in FOLLOW:
+        return ""
+    other, title, groups, notes = FOLLOW[name]
+    src = (COMPONENTS / f"{other}.py").read_text().rstrip("\n")
+    lines = src.split("\n")
+    small = "small-code" if len(lines) > 25 else ""
+    return f"""<section class="detail" id="d-{other}" data-visibility="uncounted">
+  <div class="kicker">Component code</div>
+  <div style="position:relative"><h2>{title}</h2>
+    <button class="back-btn" data-detail="{name}">← Back</button></div>
+  <div class="cols detail-cols">
+    <div>
+<pre class="{small}"><code class="language-python" data-trim data-line-numbers="{marked(lines, groups)}">
+{html.escape(src)}
+</code></pre>
+    </div>
+    <div>
+      {notes}
+      <div class="run">Try it: python demos/components/{other}.py</div>
     </div>
   </div>
 </section>
@@ -105,11 +171,15 @@ def main():
     page = PAGE.read_text()
     names = re.findall(r'class="fcard[^"]*" data-detail="(\w+)"', page)
     links = "\n".join(f'      <li><a href="#/d-{n}">{graph_title(n, card(page, n)[2])}</a></li>' for n in names)
+    for n, (other, title, _, _) in FOLLOW.items():
+        i = links.index(f'href="#/d-{n}"')
+        j = links.index("</li>", i) + len("</li>")
+        links = links[:j] + f'\n      <li><a href="#/d-{other}">{title}</a></li>' + links[j:]
     body = "\n".join([f"""<section class="detail" id="appendix" data-visibility="uncounted">
   <div class="kicker">Appendix</div>
   <h2>Component code</h2>
-  <p class="small muted">One small, runnable app per card on slides 6 and 7. Click a card in the talk to open its
-    slide; <b>← Back</b> returns to where you were.</p>
+  <p class="small muted">One small, runnable app per card on slides 6 and 7, plus live tick data with
+    <code>dcc.Interval</code>. Click a card in the talk to open its slide; <b>← Back</b> returns to where you were.</p>
   <ol class="detail-index">
 {links}
   </ol>
@@ -117,7 +187,7 @@ def main():
 """] + [slide(page, n) for n in names])
     a, b = page.index(BEGIN) + len(BEGIN), page.index(END)
     PAGE.write_text(page[:a] + "\n" + body + page[b:])
-    print(f"{len(names)} component slides written")
+    print(f"{len(names) + len(FOLLOW)} component slides written")
 
 
 if __name__ == "__main__":

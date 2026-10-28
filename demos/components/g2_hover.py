@@ -7,7 +7,11 @@ fig = px.scatter(x=[2, 3, 5, 7, 10, 20, 30],          # maturity
 
 app = Dash(__name__)
 app.layout = html.Div([
-    dcc.Graph(id="chart", figure=fig),
+    dcc.Graph(
+        id="chart",
+        figure=fig,
+        hoverData=None,           # filled in when hovering a point
+    ),
     html.Pre(id="out"),
 ])
 
