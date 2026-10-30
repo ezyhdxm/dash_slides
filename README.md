@@ -3,6 +3,9 @@
 Slides and demo apps for a 30-minute talk on Plotly Dash. The talk goes from a Plotly chart to an interactive app,
 shows what happens behind the scenes, and compares Dash with other Python app tools.
 
+**New to Dash?** Start with [`tutorial/`](tutorial/README.md): a step-by-step guide with seven small apps and a
+notebook, then building with GitHub Copilot in VS Code (step 9). All the data in this repo is synthetic (random numbers and made-up labels).
+
 ## Contents
 
 | path | what |
@@ -12,7 +15,7 @@ shows what happens behind the scenes, and compares Dash with other Python app to
 | `slides/plotly_dash_and_other_tools.pdf` | the same deck as a PDF, a backup that works offline (not interactive) |
 | `slides/img/` | screenshots of the demos, taken in headless Chrome |
 | `demos/run_all.py` | starts every demo app at once, each on its own port, for the slides' **Live app** buttons |
-| `demos/data.py` | a synthetic bond universe: 60 bonds and one year of daily spreads, made in memory |
+| `demos/data.py` | a synthetic bond universe: 60 bonds from 12 made-up issuers ("Bank A", "Energy B", …) and one year of daily spreads, made in memory |
 | `demos/01_plotly_only.py` | Plotly alone: writes `plotly_only.html`. No server |
 | `demos/02_hello_dash.py` | the smallest app: a layout with a Plotly chart |
 | `demos/03_widgets.py` | a tour of the built-in widgets. One callback echoes every value |
@@ -20,6 +23,11 @@ shows what happens behind the scenes, and compares Dash with other Python app to
 | `demos/05_click_detail.py` | click a point on one chart to see its history in another (`clickData` + `custom_data`) |
 | `demos/components/` | one small runnable app per card on slides 6 and 7 (`g*` chart events, `w*` widgets); each runs on its own with `python demos/components/<name>.py` |
 | `demos/components/w8b_ticks.py` | live tick data: `dcc.Interval` polls a tick database every second and appends only the new ticks (`extendData`). `tickdb.py` stands in for the database (an in-memory SQLite table fed by a background thread); swap `ticks_since` for your own query |
+| `tutorial/README.md` | a step-by-step guide for newcomers: seven small apps (`step1_hello.py` … `step7_matrix.py`), each adding one idea |
+| `tutorial/matrix_lines.ipynb` | a notebook: a data matrix with one line per row and one line per column, in a Dash app inside the notebook; edit the table or change the matrix from Python and both charts redraw |
+| `.github/copilot-instructions.md` | Dash rules for GitHub Copilot in VS Code, condensed from [Plotly's guide for AI coding assistants](https://dash.plotly.com/ai-coding-assistants) with sources linked, plus a few checked additions. Copy it into your own project |
+| `.github/skills/dash-app/` | a Copilot skill for building Dash apps (plan, write, check, report) and `check_app.py`, a checker that needs no browser: ids exist, every callback runs on page load, prints the wiring (`python .github/skills/dash-app/check_app.py app.py`) |
+| `.github/prompts/` | reusable Copilot Chat prompts: `/new-dash-app`, `/explain-callbacks`, `/fix-dash-error`. Tutorial step 9 lists the community resources to start from |
 | `demos/prompts.md` | the prompts for the VS Code + Copilot demo |
 | `demos/.github/copilot-instructions.md` | an example rules file that Copilot follows in `demos/` |
 
@@ -30,7 +38,7 @@ python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\
 pip install -r requirements.txt
 ```
 
-Tested with Dash 4.4.1, Plotly 6.8.0 and pandas 3.0.6.
+Tested with Dash 4.5.0, dash-ag-grid 35.3.0, Plotly 7.1.0 and pandas 3.1.0.
 
 ## Before the talk
 

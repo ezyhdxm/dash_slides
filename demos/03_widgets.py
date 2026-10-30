@@ -23,7 +23,7 @@ app.layout = html.Div([
     row("Slider", html.Div(dcc.Slider(2, 30, 1, value=10, marks={2: "2y", 10: "10y", 30: "30y"}, id="slider"),
                            style={"width": "360px"})),
     row("RangeSlider", html.Div(dcc.RangeSlider(0, 400, 50, value=[100, 250], id="range"), style={"width": "360px"})),
-    row("Input", dcc.Input(id="text", type="text", value="Northbank", debounce=True)),
+    row("Input", dcc.Input(id="text", type="text", value="Bank A", debounce=True)),
     row("DatePickerSingle", dcc.DatePickerSingle(id="date", date="2026-09-30")),
     row("Tabs", dcc.Tabs(id="tabs", value="chart", children=[dcc.Tab(label="Chart", value="chart"),
                                                              dcc.Tab(label="Table", value="table")])),

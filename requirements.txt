@@ -2,3 +2,5 @@ dash>=3.0
 plotly>=6.0
 pandas>=2.2
 numpy>=1.26
+dash-ag-grid>=31         # the editable table in tutorial/step7 and the notebook
+jupyterlab>=4            # to open tutorial/matrix_lines.ipynb (VS Code works too)

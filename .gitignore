@@ -4,3 +4,4 @@ __pycache__/
 demos/plotly_only.html
 .DS_Store
 .*.log
+.ipynb_checkpoints/

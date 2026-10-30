@@ -7,11 +7,11 @@ Deterministic (fixed seed), generated in memory: no files, no network.
 import numpy as np
 import pandas as pd
 
-ISSUERS = {
-    "Banks": ["Northbank", "Harbor Trust", "Summit Financial"],
-    "Energy": ["Petra Oil", "Bluewater Gas", "Ridge Power"],
-    "Tech": ["Quanta Systems", "Nimbus Cloud", "Vertex Chips"],
-    "Consumer": ["Maple Foods", "Urban Retail", "Crest Beverages"],
+ISSUERS = {                                 # made-up labels, not real companies
+    "Banks": ["Bank A", "Bank B", "Bank C"],
+    "Energy": ["Energy A", "Energy B", "Energy C"],
+    "Tech": ["Tech A", "Tech B", "Tech C"],
+    "Consumer": ["Consumer A", "Consumer B", "Consumer C"],
 }
 RATING_SPREAD = {"AA": 60, "A": 95, "BBB": 150, "BB": 290}
 SECTOR_SPREAD = {"Banks": 10, "Energy": 35, "Tech": -5, "Consumer": 0}
@@ -27,7 +27,7 @@ def make_bonds(seed=7):
                 spread = (RATING_SPREAD[rating] + SECTOR_SPREAD[sector] + 4 * maturity
                           + rng.normal(0, 12))
                 rows.append({
-                    "cusip": f"{issuer[:3].upper()}{int(maturity):02d}{rng.integers(100, 999)}",
+                    "cusip": f"{sector[:3].upper()}{issuer[-1]}{int(maturity):02d}{rng.integers(100, 999)}",
                     "issuer": issuer,
                     "sector": sector,
                     "rating": rating,
